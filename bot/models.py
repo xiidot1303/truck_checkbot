@@ -37,3 +37,22 @@ class Message(models.Model):
     class Meta:
         verbose_name = "Сообщение"
         verbose_name_plural = "Сообщения"
+
+class Driver(models.Model):
+    user_id = models.BigIntegerField(null=True)
+    car = models.ForeignKey('app.Car', null=True, blank=True, on_delete=models.SET_NULL)
+    name = models.CharField(null=True, blank=True, max_length=256, default='', verbose_name='Имя')
+    username = models.CharField(null=True, blank=True, max_length=256, verbose_name='username')
+    firstname = models.CharField(null=True, blank=True, max_length=256, verbose_name='Никнейм')
+    lang = models.CharField(null=True, blank=True, max_length=4, verbose_name='')
+    date = models.DateTimeField(db_index=True, null=True, auto_now_add=True, blank=True, verbose_name='Дата регистрации')
+
+    def __str__(self) -> str:
+        try:
+            return self.name + '|' + str(self.car.number)
+        except:
+            return super().__str__()
+
+    class Meta:
+        verbose_name = "Водитель"
+        verbose_name_plural = "Водители"

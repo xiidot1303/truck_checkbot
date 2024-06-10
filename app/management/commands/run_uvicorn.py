@@ -1,11 +1,8 @@
 from django.core.management.base import BaseCommand
-from bot.control.updater import application
+from bot.driver.control.updater import application as driver_app
 import asyncio
-
 import signal
 import uvicorn
-import asyncio
-from bot.control.updater import application
 from config import PORT
 
 # This function will be called when a shutdown signal is received
@@ -23,10 +20,10 @@ async def serve():
     config = uvicorn.Config("core.asgi:application", host="127.0.0.1", port=PORT, log_level="info")
     server = uvicorn.Server(config)
     # await server.serve()
-    async with application:
-        await application.start()
+    async with driver_app:
+        await driver_app.start()
         await server.serve()
-        await application.stop()
+        await driver_app.stop()
 
 
 class Command(BaseCommand):

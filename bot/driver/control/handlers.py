@@ -8,12 +8,14 @@ from telegram.ext import (
     ConversationHandler
 )
 
-from bot.bot import (
-    main,
+from bot.driver.bot import (
+    main, login
 )
 
 start = CommandHandler('start', main.start)
+get_lang = CallbackQueryHandler(login.get_lang, pattern=r"^set_lang")
 
 handlers = [
-    start
+    start,
+    get_lang
 ]

@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
-from bot.control.updater import application
+from bot.driver.control.updater import application as driverbot_app
 from telegram import Update
 import asyncio
 from asgiref.sync import sync_to_async, async_to_sync
@@ -15,15 +15,12 @@ from asgiref.sync import sync_to_async, async_to_sync
 #     async_to_sync(update_bot)(update)
 
 #     return HttpResponse('')
-
-async def update_bot(update):
-    await application.update_queue.put(update)
     
 
 @method_decorator(csrf_exempt, name='dispatch')
-class BotWebhookView(View):
+class DriverBotWebhookView(View):
     async def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode("utf-8"))
-        update = Update.de_json(data = data, bot=application.bot)
-        await update_bot(update)
+        update = Update.de_json(data = data, bot=driverbot_app.bot)
+        await driverbot_app.update_queue.put(update)
         return JsonResponse({'status': 'success'})

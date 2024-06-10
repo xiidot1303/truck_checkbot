@@ -12,8 +12,8 @@ echo "Database user: "
 read db_user
 echo "Database password"
 read db_password
-echo "Bot token: "
-read bot_token
+echo "Driver bot token: "
+read driverbot_token
 echo "Project port"
 read port
 echo "Project domain"
@@ -25,7 +25,7 @@ sed -i "s/<secret_key>/$secret_key/g" ".env"
 sed -i "s/<db_name>/$project_title/g" ".env"
 sed -i "s/<db_user>/$db_user/g" ".env"
 sed -i "s/<db_password>/$db_password/g" ".env"
-sed -i "s/<bot_token>/$bot_token/g" ".env"
+sed -i "s/<driverbot_token>/$driverbot_token/g" ".env"
 sed -i "s/<domain>/$domain/g" ".env"
 
 createdb $project_title

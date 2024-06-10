@@ -14,3 +14,10 @@ def car_transactional_update_or_create(cars_to_create, cars_to_update):
         if cars_to_update:
             # Car.objects.bulk_update(cars_to_update, ['title', 'number', 'tg_id'])
             Car.objects.bulk_update(cars_to_update, ['title', 'number'])
+
+async def get_car_by_tg_id(tg_id: int) -> Car | None:
+    try:
+        car: Car = await Car.objects.aget(tg_id=tg_id)
+        return car
+    except:
+        return None
