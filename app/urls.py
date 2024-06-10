@@ -12,7 +12,6 @@ from app.views import (
 )
 
 urlpatterns = [
-    path('', admin.site.urls),
     # login
     path('accounts/login/', LoginView.as_view()),
     path('changepassword/', PasswordChangeView.as_view(
