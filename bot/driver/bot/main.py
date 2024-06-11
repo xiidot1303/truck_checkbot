@@ -8,13 +8,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # check driver is registred or not
     if await is_driver_registred(update.message.chat_id):
-        # main menu
+        await update_message_reply_text(update, '.')
         return
     
     # check this driver ID is set on cars
     car: Car = await get_car_by_tg_id(update.message.chat_id)
     if not car:
-        await update_message_reply_text(update, 'u r not driver', update)
+        await update_message_reply_text(update, lang_dict['u r not driver'][0])
         return
 
     # send langs
