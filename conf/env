@@ -9,6 +9,7 @@ DB_NAME=<db_name>
 DB_USER=<db_user>
 DB_PASSWORD=<db_password>
 DRIVERBOT_API_TOKEN=<driverbot_token>
+DEPOT_MANAGERBOT_API_TOKEN=<depot_managerbot_token>
 WEBHOOK_URL=https://<domain>
 
 ONE_C_URL=

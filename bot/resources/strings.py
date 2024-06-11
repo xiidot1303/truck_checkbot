@@ -55,13 +55,13 @@ lang_dict = {
     ],
 
     "u r not driver": [
-        ""
+        "u r not driver"
         "", 
     ],
 
     "successfully registred": ["", ""],
 
-    "": ["", ""],
+    "u r not depot manager": ["u r not depot manager", ""],
 
     "": ["", ""],
 

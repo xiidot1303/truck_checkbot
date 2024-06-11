@@ -1,15 +1,19 @@
 from django.core.management.base import BaseCommand
 from bot.driver.control.updater import application as driver_app
+from bot.depot_manager.control.updater import application as depot_manager_app
 import asyncio
 import signal
 import uvicorn
 from config import PORT
+from asgiref.sync import async_to_sync
 
 # This function will be called when a shutdown signal is received
 def handle_shutdown(signal, frame):
     print("Received shutdown signal")
     # Stop the event loop
     loop = asyncio.get_event_loop()
+    async_to_sync(driver_app.stop())
+    async_to_sync(depot_manager_app.stop())
     loop.stop()
 
 # Register signal handlers for graceful shutdown
@@ -22,8 +26,11 @@ async def serve():
     # await server.serve()
     async with driver_app:
         await driver_app.start()
-        await server.serve()
-        await driver_app.stop()
+        # await driver_app.stop()
+        async with depot_manager_app:
+            await depot_manager_app.start()
+            await server.serve()
+            # await depot_manager_app.stop()
 
 
 class Command(BaseCommand):

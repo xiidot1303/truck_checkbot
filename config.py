@@ -18,6 +18,7 @@ DB_PASSWORD = os.environ.get("DB_PASSWORD")
 
 # Telegram bot
 DRIVERBOT_API_TOKEN = os.environ.get("DRIVERBOT_API_TOKEN")
+DEPOT_MANAGERBOT_API_TOKEN = os.environ.get("DEPOT_MANAGERBOT_API_TOKEN")
 WEBHOOK_URL = os.environ.get("WEBHOOK_URL")
 WEBAPP_URL = os.environ.get("WEBAPP_URL")
 

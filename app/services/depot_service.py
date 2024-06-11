@@ -13,3 +13,9 @@ def depot_transactional_update_or_create(depots_to_create, depots_to_update):
             Depot.objects.bulk_create(depots_to_create)
         if depots_to_update:
             Depot.objects.bulk_update(depots_to_update, ['title', 'branch', 'tg_id'])
+
+async def get_depot_by_tg_id(tg_id: int) -> Depot | None:
+    try:
+        depot: Depot = await Depot.objects.aget(tg_id=tg_id)
+    except:
+        return None

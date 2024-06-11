@@ -13,6 +13,6 @@ def is_driver_registred(user_id: int):
 async def create_driver(user_id, car, lang, firstname) -> Driver:
     driver = await Driver.objects.acreate(
         user_id = user_id, car = car, 
-        lang = lang, firstname = firstname
+        lang = lang, firstname = firstname, name = firstname
     )
     return driver

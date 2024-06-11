@@ -56,3 +56,22 @@ class Driver(models.Model):
     class Meta:
         verbose_name = "Водитель"
         verbose_name_plural = "Водители"
+
+class DepotManager(models.Model):
+    user_id = models.BigIntegerField(null=True)
+    depot = models.ForeignKey('app.Depot', null=True, blank=True, on_delete=models.SET_NULL)
+    name = models.CharField(null=True, blank=True, max_length=256, default='', verbose_name='Имя')
+    username = models.CharField(null=True, blank=True, max_length=256, verbose_name='username')
+    firstname = models.CharField(null=True, blank=True, max_length=256, verbose_name='Никнейм')
+    lang = models.CharField(null=True, blank=True, max_length=4, verbose_name='')
+    date = models.DateTimeField(db_index=True, null=True, auto_now_add=True, blank=True, verbose_name='Дата регистрации')
+
+    def __str__(self) -> str:
+        try:
+            return self.name + '|' + str(self.depot.title)
+        except:
+            return super().__str__()
+
+    class Meta:
+        verbose_name = "Менеджер склада"
+        verbose_name_plural = "Менеджеры склада"
