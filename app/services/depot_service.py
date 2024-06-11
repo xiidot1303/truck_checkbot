@@ -17,5 +17,6 @@ def depot_transactional_update_or_create(depots_to_create, depots_to_update):
 async def get_depot_by_tg_id(tg_id: int) -> Depot | None:
     try:
         depot: Depot = await Depot.objects.aget(tg_id=tg_id)
+        return depot
     except:
         return None

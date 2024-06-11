@@ -3,8 +3,6 @@ from bot.services.depot_manager_service import is_depot_manager_registred
 from app.services.depot_service import get_depot_by_tg_id, Depot
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    bot = update.message.get_bot()
-    print(bot.token)
     if await is_group(update):
         return
     
