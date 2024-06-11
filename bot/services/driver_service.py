@@ -10,9 +10,9 @@ def is_driver_registred(user_id: int):
     else:
         return False
 
-async def create_driver(user_id, car, lang, firstname) -> Driver:
+async def create_driver(user_id, lang, firstname) -> Driver:
     driver = await Driver.objects.acreate(
-        user_id = user_id, car = car, 
+        user_id = user_id, 
         lang = lang, firstname = firstname, name = firstname
     )
     return driver

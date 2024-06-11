@@ -40,7 +40,6 @@ class Message(models.Model):
 
 class Driver(models.Model):
     user_id = models.BigIntegerField(null=True)
-    car = models.ForeignKey('app.Car', null=True, blank=True, on_delete=models.SET_NULL)
     name = models.CharField(null=True, blank=True, max_length=256, default='', verbose_name='Имя')
     username = models.CharField(null=True, blank=True, max_length=256, verbose_name='username')
     firstname = models.CharField(null=True, blank=True, max_length=256, verbose_name='Никнейм')
@@ -59,7 +58,6 @@ class Driver(models.Model):
 
 class DepotManager(models.Model):
     user_id = models.BigIntegerField(null=True)
-    depot = models.ForeignKey('app.Depot', null=True, blank=True, on_delete=models.SET_NULL)
     name = models.CharField(null=True, blank=True, max_length=256, default='', verbose_name='Имя')
     username = models.CharField(null=True, blank=True, max_length=256, verbose_name='username')
     firstname = models.CharField(null=True, blank=True, max_length=256, verbose_name='Никнейм')

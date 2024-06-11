@@ -9,9 +9,9 @@ def is_depot_manager_registred(user_id: int):
     else:
         return False
 
-async def create_depot_manager(user_id, depot, lang, firstname) -> DepotManager:
+async def create_depot_manager(user_id, lang, firstname) -> DepotManager:
     depot_manager = await DepotManager.objects.acreate(
-        user_id = user_id, depot = depot, 
+        user_id = user_id,
         lang = lang, firstname = firstname, name = firstname
     )
     return depot_manager
