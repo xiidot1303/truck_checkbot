@@ -63,13 +63,13 @@ lang_dict = {
 
     "u r not depot manager": ["u r not depot manager", ""],
 
-    "": ["", ""],
+    "set new task for driver": ["", ""],
 
-    "": ["", ""],
+    "i received it": ["Qabul qildim", "Я получил"],
 
-    "": ["", ""],
+    "car": ["", "Автомобиль"],
 
-    "": ["", ""],
+    "number": ["", "Номер"],
 
     "": ["", ""],
 

@@ -73,3 +73,10 @@ class DepotManager(models.Model):
     class Meta:
         verbose_name = "Менеджер склада"
         verbose_name_plural = "Менеджеры склада"
+
+class Factory(models.Model):
+    tg_id = models.BigIntegerField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Заведующий складом"
+        verbose_name_plural = "Заведующие складом"

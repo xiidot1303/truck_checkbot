@@ -6,6 +6,7 @@ class app(AppConfig):
     name = 'app'
 
     def ready(self):
+        import app.signals
     #     run_once = os.environ.get('CMDLINERUNNER_RUN_ONCE')
     #     if run_once is not None:
     #         return
