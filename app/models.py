@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from asgiref.sync import sync_to_async
 
 class Depot(models.Model):
     code = models.IntegerField(null=True, blank=False)
@@ -25,6 +26,8 @@ class Task(models.Model):
     is_complete = models.BooleanField(default=False)
     current_depot_index = models.PositiveIntegerField(default=0)
 
+    @property
+    @sync_to_async
     def get_next_depot(self):
         depot_relations = self.taskdepot_set.order_by('order')
         if self.current_depot_index < depot_relations.count():
@@ -43,9 +46,8 @@ class TaskEvent(models.Model):
     EVENT_TYPES = [
         ('arrive_to_factory', 'Arrive to factory'),
         ('in_factory', 'In Factory'),
-        ('factory_done', 'Factory Done'),
-        ('arrived_at_depot', 'Arrived at Depot'),
-        ('depot_done', 'Depot Done'),
+        ('arrive_to_depot', 'Arrive to Depot'),
+        ('in_depot', 'In Depot'),
     ]
 
     task = models.ForeignKey(Task, related_name='events', on_delete=models.CASCADE)

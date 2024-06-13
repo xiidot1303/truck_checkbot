@@ -71,8 +71,8 @@ lang_dict = {
 
     "number": ["", "Номер"],
 
-    "": ["", ""],
+    "factory received car": ["", ""],
 
-    "": ["", ""],
+    "click button after get car": ["", ""],
 
 }

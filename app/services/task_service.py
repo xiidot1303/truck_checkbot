@@ -1,15 +1,17 @@
 from app.services import *
-from app.models import Task, TaskEvent
+from app.models import Task, TaskEvent, Depot
 
 async def get_task_by_id(id) -> Task:
     obj = await Task.objects.aget(id=id)
     return obj
 
-async def create_taskevent(task: Task, event_type) -> TaskEvent:
+async def create_taskevent(task: Task, event_type, depot = None) -> TaskEvent:
     start_time = await datetime_now()
     obj: TaskEvent = await TaskEvent.objects.acreate(
         task = task, event_type = event_type, start_time = start_time
     )
+    obj.depot = depot
+    await obj.asave()
     return obj
 
 async def get_taskevent_by_task_and_event_type(task: Task, event_type) -> TaskEvent:
