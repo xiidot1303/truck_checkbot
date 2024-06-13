@@ -77,7 +77,12 @@ class DriverAdmin(admin.ModelAdmin):
     def get_list_display(self, request):
         return [field.name for field in self.model._meta.concrete_fields]
 
+class DepotManagerAdmin(admin.ModelAdmin):
+    def get_list_display(self, request):
+        return [field.name for field in self.model._meta.concrete_fields]    
+
 admin.site.register(Bot_user, Bot_userAdmin)
 admin.site.register(Message, MesageAdmin)
 admin.site.register(Driver, DriverAdmin)
+admin.site.register(DepotManager, DepotManagerAdmin)
 admin.site.register(Factory, SingletonModelAdmin)
