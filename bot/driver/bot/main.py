@@ -3,7 +3,7 @@ from bot.services.driver_service import is_driver_registred
 from app.services.car_service import get_car_by_tg_id, Car
 from app.services.task_service import *
 from bot.services.notification_service import *
-from bot.depot_manager.control.updater import application as depot_manager_app
+from bot.depot_manager.control.updater import application as _depot_manager_app
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if await is_group(update):
@@ -40,7 +40,7 @@ async def received_new_task(update: Update, context: CustomContext):
         alert_factory_about_driver_arriving_notification(context.bot, task)
     )
     await query.answer()
-    # await query.edit_message_reply_markup(reply_markup=None)
+    await query.edit_message_reply_markup(reply_markup=None)
     
 async def factory_received_driver(update: Update, context: CustomContext):
     query: CallbackQuery = update.callback_query
@@ -60,7 +60,7 @@ async def factory_received_driver(update: Update, context: CustomContext):
         alert_driver_about_car_in_factory_notification(context.bot, task)
     )
     await query.answer()
-    # await query.edit_message_reply_markup(reply_markup=None)
+    await query.edit_message_reply_markup(reply_markup=None)
 
 async def driver_received_car_from_factory(update: Update, context: CustomContext):
     query: CallbackQuery = update.callback_query
@@ -73,14 +73,51 @@ async def driver_received_car_from_factory(update: Update, context: CustomContex
     await complete_taskevent(taskevent)
 
     depot: Depot = await task.get_next_depot
+    # get task depot
+    taskdepot = await get_taskdepot_by_task_and_depot(task, depot)
+    # update current depot index
+    task.current_depot_index = taskdepot.order
+    await task.asave()
     # create new taskevent about driver arrive to depot
-    await create_taskevent(task, 'arrive_to_depot', depot=depot)
+    taskevent: TaskEvent = await create_taskevent(task, 'arrive_to_depot', depot=depot)
     # send message to depot manager that driver is arriving to depot
     loop = asyncio.get_event_loop()
     loop.create_task(
         alert_depot_manager_about_driver_arriving_notification(
-            depot_manager_app.bot, task, depot
+            _depot_manager_app.bot, task, depot, taskevent
         )
     )
     await query.answer()
-    # await query.edit_message_reply_markup(reply_markup=None)
+    await query.edit_message_reply_markup(reply_markup=None)
+
+async def driver_received_car_from_depot(update: Update, context: CustomContext):
+    @sync_to_async
+    def get_task_of_taskevent(taskevent: TaskEvent) -> Task:
+        return taskevent.task
+    query: CallbackQuery = update.callback_query
+    data = query.data
+    *args, taskevent_id = data.split('-')
+    taskevent: TaskEvent = await get_taskevent_by_id(taskevent_id)
+    task: Task = await get_task_of_taskevent(taskevent)
+    # complete this taskevent
+    await complete_taskevent(taskevent)
+
+    depot: Depot = await task.get_next_depot
+    if depot:
+        # get task depot
+        taskdepot = await get_taskdepot_by_task_and_depot(task, depot)
+        # update current depot index
+        task.current_depot_index = taskdepot.order
+        await task.asave()
+
+        # create new taskevent about driver arrive to depot
+        taskevent: TaskEvent = await create_taskevent(task, 'arrive_to_depot', depot=depot)
+        # send message to depot manager that driver is arriving to depot
+        loop = asyncio.get_event_loop()
+        loop.create_task(
+            alert_depot_manager_about_driver_arriving_notification(
+                _depot_manager_app.bot, task, depot, taskevent
+            )
+        )
+    await query.answer()
+    await query.edit_message_reply_markup(reply_markup=None)

@@ -1,8 +1,12 @@
 from app.services import *
-from app.models import Task, TaskEvent, Depot
+from app.models import Task, TaskEvent, Depot, TaskDepot
 
 async def get_task_by_id(id) -> Task:
     obj = await Task.objects.aget(id=id)
+    return obj
+
+async def get_taskevent_by_id(id) -> TaskEvent:
+    obj = await TaskEvent.objects.aget(id=id)
     return obj
 
 async def create_taskevent(task: Task, event_type, depot = None) -> TaskEvent:
@@ -25,3 +29,7 @@ async def complete_taskevent(taskevent: TaskEvent):
     taskevent.end_time = end_time
     await taskevent.asave()
     return
+
+async def get_taskdepot_by_task_and_depot(task: Task, depot: Depot) -> TaskDepot:
+    obj = await TaskDepot.objects.aget(task = task, depot = depot)
+    return obj

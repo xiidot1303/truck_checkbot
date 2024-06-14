@@ -45,3 +45,10 @@ async def driver_info_string_for_depot(driver: Driver, user_id):
         car_number = car.number
     )
     return text
+
+
+async def car_in_depot_string_for_driver(user_id):
+    text = f"{await get_word_driver('depot received car', chat_id=user_id)}\n\n" \
+        f"{await get_word_driver('click button after get car', chat_id=user_id)}"
+    
+    return text

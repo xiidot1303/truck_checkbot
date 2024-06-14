@@ -39,13 +39,24 @@ async def alert_driver_about_car_in_factory_notification(bot, task: Task):
     markup = InlineKeyboardMarkup([[i_get]])
     await send_newsletter(bot, user_id, text, reply_markup=markup)
 
-async def alert_depot_manager_about_driver_arriving_notification(bot: Bot, task: Task, depot: Depot):
+async def alert_depot_manager_about_driver_arriving_notification(bot: Bot, task: Task, depot: Depot, taskevent: TaskEvent):
     driver: Driver = await driver_of_task(task)
     user_id = depot.tg_id
     text = await driver_info_string_for_depot(driver, user_id)
     i_get = InlineKeyboardButton(
         text=await get_word_depot_manager('i received it', chat_id=user_id),
-        callback_data=f'depot_receive_driver-{task.id}'
+        callback_data=f'depot_receive_driver-{taskevent.id}'
+        )
+    markup = InlineKeyboardMarkup([[i_get]])
+    await send_newsletter(bot, user_id, text, reply_markup=markup)
+
+async def alert_driver_about_car_in_depot_notification(bot, task: Task, taskevent: TaskEvent):
+    driver: Driver = await driver_of_task(task)
+    user_id = driver.user_id
+    text = await car_in_depot_string_for_driver(user_id)
+    i_get = InlineKeyboardButton(
+        text=await get_word_driver('i received it', chat_id=user_id),
+        callback_data=f'driver_receive_car_from_depot-{taskevent.id}'
         )
     markup = InlineKeyboardMarkup([[i_get]])
     await send_newsletter(bot, user_id, text, reply_markup=markup)

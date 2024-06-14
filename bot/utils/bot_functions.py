@@ -19,9 +19,14 @@ from telegram.constants import (
 )
 from telegram.ext import (
     ConversationHandler,
-    ContextTypes
+    ContextTypes,
+    Application
 )
 from uuid import uuid4
+from config import DRIVERBOT_API_TOKEN, DEPOT_MANAGERBOT_API_TOKEN
+
+driver_app = Application.builder().token(DRIVERBOT_API_TOKEN).updater(None).build()
+depot_manager_app = Application.builder().token(DEPOT_MANAGERBOT_API_TOKEN).updater(None).build()
 
 async def update_message_reply_text(update: Update, text, reply_markup=None, disable_web_page_preview = True):
     message = await update.message.reply_text(
