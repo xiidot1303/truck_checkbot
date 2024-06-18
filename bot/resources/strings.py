@@ -55,27 +55,45 @@ lang_dict = {
     ],
 
     "u r not driver": [
-        "u r not driver"
+        "Sizning profilingiz haydovchilar ro'yxatida mavjud emas.\n\nВаш профиль отсутствует в списке драйверов."
         "", 
     ],
 
-    "successfully registred": ["", ""],
+    "successfully registred": [
+        "🥳 Siz muvaffaqiyatli ro'yxatdan o'tdingiz!", 
+        "🥳 Вы успешно зарегистрированы."
+        ],
 
-    "u r not depot manager": ["u r not depot manager", ""],
+    "u r not depot manager": [
+        "Sizning profilingiz ro'yxatda mavjud emas.\n\nВаш профиль отсутствует в списке.", 
+        ""
+        ],
 
-    "set new task for driver": ["", ""],
+    "set new task for driver": [
+        "Siz uchun yangi topshiriq yaratildi.", 
+        "Для вас создано новое задание."
+        ],
 
-    "i received it": ["Qabul qildim", "Я получил"],
+    "i received it": ["Qabul qildim", "Получил"],
 
-    "car": ["", "Автомобиль"],
+    "car": ["Mashina", "Автомобиль"],
 
-    "number": ["", "Номер"],
+    "number": ["Raqami", "Номер"],
 
-    "factory received car": ["", ""],
+    "factory received car": [
+        "Mashina zavod xodimlari tomonidan qabul qilib olindi.", 
+        "Автомобиль получен на заводе"
+        ],
 
-    "click button after get car": ["", ""],
+    "click button after get car": [
+        "Mashinani qayta qabul qilib olganingizdan keyin <code>Qabul qildim</code> tugmasini bosing.", 
+        "Нажмите на кнопку <code>Получил</code> после получения автомобиля у завсклада"
+        ],
 
-    "depot received car": ["", ""],
+    "depot received car": [
+        "Автомобиль получен в склад", 
+        "Mashina zavod xodimlari tomonidan qabul qilib olindi."
+        ],
 
     "": ["", ""],
 
