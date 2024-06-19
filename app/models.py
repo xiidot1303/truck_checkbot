@@ -4,8 +4,8 @@ from asgiref.sync import sync_to_async
 
 class Depot(models.Model):
     code = models.IntegerField(null=True, blank=False)
-    title = models.CharField(null=True, blank=True, max_length=255)
-    branch = models.CharField(null=True, blank=True, max_length=255)
+    title = models.CharField(null=True, blank=True, max_length=255, verbose_name="Название")
+    branch = models.CharField(null=True, blank=True, max_length=255, verbose_name="Регион")
     tg_id = models.CharField(null=True, blank=True, max_length=16)
     bot_user = models.OneToOneField('bot.DepotManager', null=True, blank=True, on_delete=models.PROTECT)
     lat = models.CharField(null=True, blank=True, max_length=32)
@@ -13,6 +13,10 @@ class Depot(models.Model):
 
     def __str__(self) -> str:
         return f"{self.branch} | {self.title}"
+
+    class Meta:
+        verbose_name = "Склад"
+        verbose_name_plural = "Склады"
 
 class Car(models.Model):
     code = models.CharField(null=True, blank=False, max_length=64)
@@ -22,9 +26,9 @@ class Car(models.Model):
     bot_user = models.OneToOneField('bot.Driver', null=True, blank=True, on_delete=models.PROTECT)
 
 class Task(models.Model):
-    driver = models.ForeignKey('bot.Driver', on_delete=models.CASCADE)
+    driver = models.ForeignKey('bot.Driver', on_delete=models.CASCADE, verbose_name="Водитель")
     depots = models.ManyToManyField(Depot, through='TaskDepot')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата")
     is_complete = models.BooleanField(default=False)
     current_depot_index = models.PositiveIntegerField(default=0)
 
@@ -36,24 +40,35 @@ class Task(models.Model):
             return depot_relations[self.current_depot_index].depot
         return None
 
+    class Meta:
+        verbose_name = "Задание"
+        verbose_name_plural = "Задания"
+
+
 class TaskDepot(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
-    order = models.PositiveIntegerField()
+    depot = models.ForeignKey(Depot, on_delete=models.CASCADE, verbose_name="Склад")
+    order = models.PositiveIntegerField(verbose_name="Порядок")
 
     class Meta:
         unique_together = ('task', 'depot')
+        verbose_name = "Склад заданий"
+        verbose_name_plural = "Склады заданий"
 
 class TaskEvent(models.Model):
     EVENT_TYPES = [
-        ('arrive_to_factory', 'Arrive to factory'),
-        ('in_factory', 'In Factory'),
-        ('arrive_to_depot', 'Arrive to Depot'),
-        ('in_depot', 'In Depot'),
+        ('arrive_to_factory', 'Водитель прибыл на завод'),
+        ('in_factory', 'На заводе'),
+        ('arrive_to_depot', 'Водитель прибыл на склад'),
+        ('in_depot', 'В складе'),
     ]
 
-    task = models.ForeignKey(Task, related_name='events', on_delete=models.CASCADE)
-    event_type = models.CharField(max_length=50, choices=EVENT_TYPES)
-    start_time = models.DateTimeField(null=True, blank=True) 
-    end_time = models.DateTimeField(null=True, blank=True)
-    depot = models.ForeignKey(Depot, null=True, blank=True, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, related_name='events', on_delete=models.CASCADE, verbose_name="Задание")
+    event_type = models.CharField(max_length=50, choices=EVENT_TYPES, verbose_name="Тип")
+    start_time = models.DateTimeField(null=True, blank=True, verbose_name="Время начала") 
+    end_time = models.DateTimeField(null=True, blank=True, verbose_name="Конечное время")
+    depot = models.ForeignKey(Depot, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Склад")
+
+    class Meta:
+        verbose_name = "Событие"
+        verbose_name_plural = "События"

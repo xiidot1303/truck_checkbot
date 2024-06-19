@@ -2,8 +2,9 @@ from django.contrib import admin
 from app.models import *
 
 class DepotAdmin(admin.ModelAdmin):
-    def get_list_display(self, request):
-        return [field.name for field in self.model._meta.concrete_fields]
+    list_display = ["title", "branch", "tg_id", "lat", "lon"]
+    list_editable = ["title", "branch", "tg_id", "lat", "lon"]
+    list_display_links = None
 
 class CarAdmin(admin.ModelAdmin):
     def get_list_display(self, request):
@@ -16,10 +17,20 @@ class TaskDepotInline(admin.TabularInline):
 
 class TaskEventInline(admin.TabularInline):
     model = TaskEvent
-    extra = 1
+    extra = 0
+    readonly_fields = ['event_type', 'start_time', 'end_time', 'depot']
 
 class TaskAdmin(admin.ModelAdmin):
+    list_display = ['driver', 'created_at']
+    list_filter = ['driver']
+    search_fields = ['driver']
     inlines = [TaskDepotInline, TaskEventInline]
+
+    fieldsets = (
+        ('', {
+            'fields': ['driver'],
+        }),
+    )
 
 admin.site.register(Depot, DepotAdmin)
 admin.site.register(Car, CarAdmin)
