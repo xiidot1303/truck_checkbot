@@ -35,5 +35,5 @@ class TaskAdmin(admin.ModelAdmin):
 admin.site.register(Depot, DepotAdmin)
 admin.site.register(Car, CarAdmin)
 admin.site.register(Task, TaskAdmin)
-admin.site.register(TaskDepot)
-admin.site.register(TaskEvent)
+# admin.site.register(TaskDepot)
+# admin.site.register(TaskEvent)
