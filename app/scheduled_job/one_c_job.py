@@ -42,6 +42,8 @@ def update_depots():
             depot.title = item['title']
             depot.branch = item['branch']
             depot.tg_id = item['tg_id']
+            depot.lat = item['lat']
+            depot.lon = item['lon']
             depots_to_update.append(depot)
         else:
             depots_to_create.append(Depot(**item))
