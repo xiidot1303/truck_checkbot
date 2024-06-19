@@ -40,8 +40,8 @@ async def update_message_reply_text(update: Update, text, reply_markup=None, dis
 async def bot_send_message(update: Update, context: ContextTypes.DEFAULT_TYPE, text, reply_markup=None, disable_web_page_preview = True):
     bot = context.bot
     message = await bot.send_message(
-        update.message.chat.id, 
-        text,
+        chat_id = update.message.chat.id, 
+        text = text,
         reply_markup=reply_markup,
         parse_mode = ParseMode.HTML,
         disable_web_page_preview = disable_web_page_preview,

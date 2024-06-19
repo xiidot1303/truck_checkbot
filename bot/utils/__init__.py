@@ -1,4 +1,5 @@
 from bot.utils.bot_functions import *
+import math
 
 async def get_callback_query_data(update):
     data = await update.data
@@ -37,3 +38,29 @@ async def save_and_get_photo(update, context):
 async def set_last_msg_and_markup(context, msg, markup=None):
     context.user_data['last_msg'] = msg
     context.user_data['last_markup'] = markup
+
+async def calc_distance_of_two_points(lat1, lon1, lat2, lon2):
+    """
+    Calculate the great-circle distance between two points 
+    on the Earth's surface given their latitude and longitude.\n
+    The result is in meters.
+    """
+    # Convert latitude and longitude from degrees to radians
+    lat1 = math.radians(float(lat1))
+    lon1 = math.radians(float(lon1))
+    lat2 = math.radians(float(lat2))
+    lon2 = math.radians(float(lon2))
+    
+    # Haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    
+    # Radius of earth in kilometers. Use 3956 for miles. Determines return value units.
+    r = 6371.0
+    
+    # Calculate the result
+    distance = r * c
+    distance_m = distance * 1000
+    return distance_m

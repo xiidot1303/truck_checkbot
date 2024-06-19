@@ -91,21 +91,43 @@ lang_dict = {
         ],
 
     "depot received car": [
+        "Mashina omborxona xodimlari tomonidan qabul qilib olindi."
         "Автомобиль получен в склад", 
-        "Mashina zavod xodimlari tomonidan qabul qilib olindi."
         ],
 
-    "": ["", ""],
+    "click button after arrive to factory": [
+        "Siz hozirda zavodga borishingiz kerak.\n" \
+        "Zavodga yetib borgandan so'ng <code>Yetib keldim</code> tugmasini bosing", 
+        "Вы должны прибыть на заводу прямо сейчас.\nНажмите кнопку <code>Прибыл</code>, если вы прибыли на завод"
+        ],
 
-    "": ["", ""],
+    "send live location": [
+        "Ishni boshlashdan oldin siz jonli lokatsiya yuborishingiz kerak. " \
+            "Shu orqali sizning koordinatalaringiz yangilanib boradi.\n\n" \
+                "<b>Iltimos, jonli lokatsiya yuboring</b>", 
+        "Прежде чем приступить к работе, вы должны прислать мне живое местоположение." \
+            "Тогда ваши координаты будут обновлены.\n\n" \
+                "<b>Пожалуйста, пришлите мне живое местоположение.</b>"
+        ],
 
-    "": ["", ""],
+    "arrived": ["Yetib keldim", "Прибыл"],
 
-    "": ["", ""],
+    "your location is wrong": [
+        "Siz yetib borishingiz kerak bo'lgan manzilda emassiz.\n\n" \
+            "Koordinatalaringiz yangilanayotganligini tekshirib, qaytatdan urinib ko'ring", 
+        "Вы находитесь не в том месте, где должны быть.\n\n" \
+            "Проверьте, что ваши координаты обновляются, и повторите попытку"
+        ],
 
-    "": ["", ""],
+    "click button after arrive to depot": [
+        "Manzilga yetib borgandan so'ng <code>Yetib keldim</code> tugmasini bosing.", 
+        "Как только вы достигнете пункта назначения, нажмите кнопку <code>Я прибыл</code>."
+        ],
 
-    "": ["", ""],
+    "your next address": [
+        "Keyingiz manzil", 
+        "Следующий пункт назначения"
+        ],
 
     "": ["", ""],
 

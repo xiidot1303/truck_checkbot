@@ -45,6 +45,8 @@ class Driver(models.Model):
     firstname = models.CharField(null=True, blank=True, max_length=256, verbose_name='Никнейм')
     lang = models.CharField(null=True, blank=True, max_length=4, verbose_name='')
     date = models.DateTimeField(db_index=True, null=True, auto_now_add=True, blank=True, verbose_name='Дата регистрации')
+    lat = models.CharField(null=True, blank=True, max_length=32)
+    lon = models.CharField(null=True, blank=True, max_length=32)
 
     def __str__(self) -> str:
         try:
@@ -76,6 +78,9 @@ class DepotManager(models.Model):
 
 class Factory(models.Model):
     tg_id = models.BigIntegerField(null=True, blank=True)
+    lat = models.CharField(null=True, blank=True, max_length=32)
+    lon = models.CharField(null=True, blank=True, max_length=32)
+
 
     class Meta:
         verbose_name = "Заведующий складом"

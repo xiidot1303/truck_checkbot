@@ -52,3 +52,9 @@ async def car_in_depot_string_for_driver(user_id):
         f"{await get_word_driver('click button after get car', chat_id=user_id)}"
     
     return text
+
+async def drivers_next_address_string(user_id, address):
+    text = f"{await get_word_driver('your next address', chat_id=user_id)}: " \
+        f"<i>{address}</i>\n\n" \
+            f"{await get_word_driver('click button after arrive to depot', chat_id=user_id)}"
+    return text

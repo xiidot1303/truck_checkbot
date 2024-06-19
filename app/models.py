@@ -8,6 +8,8 @@ class Depot(models.Model):
     branch = models.CharField(null=True, blank=True, max_length=255)
     tg_id = models.CharField(null=True, blank=True, max_length=16)
     bot_user = models.OneToOneField('bot.DepotManager', null=True, blank=True, on_delete=models.PROTECT)
+    lat = models.CharField(null=True, blank=True, max_length=32)
+    lon = models.CharField(null=True, blank=True, max_length=32)
 
     def __str__(self) -> str:
         return f"{self.branch} | {self.title}"
