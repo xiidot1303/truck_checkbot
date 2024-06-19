@@ -18,7 +18,7 @@ def update_cars():
             car = existing_cars_dict[code]
             car.title = item['title']
             car.number = item['number']
-            # car.tg_id = item['tg_id']
+            car.tg_id = item['tg_id']
             cars_to_update.append(car)
         else:
             cars_to_create.append(Car(**item))
