@@ -180,5 +180,10 @@ async def driver_received_car_from_depot(update: Update, context: CustomContext)
             await drivers_next_address_string(query.message.chat.id, address),
             reply_markup=markup
         )
+    else:
+        # end task
+        task.is_complete = True
+        await task.asave()
+        
     await query.answer()
     await query.edit_message_reply_markup(reply_markup=None)
