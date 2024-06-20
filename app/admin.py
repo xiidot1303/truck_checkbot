@@ -18,7 +18,17 @@ class TaskDepotInline(admin.TabularInline):
 class TaskEventInline(admin.TabularInline):
     model = TaskEvent
     extra = 0
-    readonly_fields = ['event_type', 'start_time', 'end_time', 'depot']
+    readonly_fields = ['event_type', 'start_time', 'end_time', 'spend_time', 'depot']
+
+    def spend_time(self, obj):
+        if obj.end_time and obj.start_time:
+            delta = obj.end_time - obj.start_time
+            minute = round(delta.seconds / 60, 2)
+            return minute
+        else:
+            return ""
+
+    spend_time.short_description = "Пройденное время (Минуты)"
 
 class TaskAdmin(admin.ModelAdmin):
     list_display = ['driver', 'created_at']
