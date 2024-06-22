@@ -85,3 +85,10 @@ class Factory(models.Model):
     class Meta:
         verbose_name = "Заведующий складом"
         verbose_name_plural = "Заведующие складом"
+
+class ReportGroup(models.Model):
+    tg_id = models.BigIntegerField(null=True, blank=False)
+
+    class Meta:
+        verbose_name = "Группа для отчета"
+        verbose_name_plural = "Группы для отчета"

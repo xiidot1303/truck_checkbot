@@ -184,6 +184,10 @@ async def driver_received_car_from_depot(update: Update, context: CustomContext)
         # end task
         task.is_complete = True
         await task.asave()
+        # generate excel report
+        
+        # send report to group
+
         
     await query.answer()
     await query.edit_message_reply_markup(reply_markup=None)

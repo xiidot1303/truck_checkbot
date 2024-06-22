@@ -25,6 +25,9 @@ class Car(models.Model):
     tg_id = models.CharField(null=True, blank=True, max_length=16)
     bot_user = models.OneToOneField('bot.Driver', null=True, blank=True, on_delete=models.PROTECT)
 
+    def __str__(self) -> str:
+        return f"{self.title} {self.number}"
+
 class Task(models.Model):
     driver = models.ForeignKey('bot.Driver', on_delete=models.CASCADE, verbose_name="Водитель")
     depots = models.ManyToManyField(Depot, through='TaskDepot')
