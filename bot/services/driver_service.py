@@ -1,5 +1,5 @@
 from app.services import *
-from bot.models import Driver, Factory
+from bot.models import Driver, Factory, ReportGroup
 from asgiref.sync import sync_to_async
 from telegram import Update
 from bot.utils import calc_distance_of_two_points
@@ -31,6 +31,11 @@ async def create_driver(user_id, lang, firstname) -> Driver:
 async def get_factory() -> Factory:
     obj: Factory = await Factory.objects.aget(pk=1)
     return obj
+
+async def get_report_group() -> ReportGroup:
+    obj: ReportGroup = await ReportGroup.objects.aget(pk=1)
+    return obj
+
 
 @sync_to_async
 def driver_of_task(task) -> Driver:

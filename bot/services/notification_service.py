@@ -2,8 +2,9 @@ from bot.utils.bot_functions import *
 from bot.models import *
 from app.models import *
 from bot.services.string_service import *
-from bot.services.driver_service import get_factory, get_driver_by_id, driver_of_task
+from bot.services.driver_service import get_factory, get_driver_by_id, driver_of_task, get_report_group
 from asgiref.sync import *
+import aiofiles
 
 async def alert_driver_about_new_task_notification(bot: Bot, task: Task):
     driver: Driver = task.driver
@@ -60,3 +61,12 @@ async def alert_driver_about_car_in_depot_notification(bot, task: Task, taskeven
         )
     markup = InlineKeyboardMarkup([[i_get]])
     await send_newsletter(bot, user_id, text, reply_markup=markup)
+
+async def send_report_of_task_newsletter(bot: Bot, task: Task, file_path):
+    report_group: ReportGroup = await get_report_group()
+    await send_newsletter(
+        bot,
+        report_group.tg_id,
+        f"{task.driver.car}",
+        document=file_path
+        )

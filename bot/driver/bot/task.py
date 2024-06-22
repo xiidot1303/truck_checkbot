@@ -185,9 +185,16 @@ async def driver_received_car_from_depot(update: Update, context: CustomContext)
         task.is_complete = True
         await task.asave()
         # generate excel report
-        
+        excel_file_path = await generate_excel_report_of_taks(task)
         # send report to group
-
+        loop = asyncio.get_event_loop()
+        loop.create_task(
+            send_report_of_task_newsletter(
+                context.bot,
+                task,
+                excel_file_path
+            )
+        )
         
     await query.answer()
-    await query.edit_message_reply_markup(reply_markup=None)
+    # await query.edit_message_reply_markup(reply_markup=None)
