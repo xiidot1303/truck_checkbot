@@ -31,7 +31,7 @@ class CustomContext(CallbackContext[ExtBot, dict, dict, dict]):
         return super().from_update(update, application)
 
 context_types = ContextTypes(context=CustomContext)
-application = Application.builder().token(DEPOT_MANAGERBOT_API_TOKEN).updater(None).context_types(context_types).build()
+application = Application.builder().token(DEPOT_MANAGERBOT_API_TOKEN).context_types(context_types).build()
 
 # add handlers
 for handler in handlers[::-1]:
