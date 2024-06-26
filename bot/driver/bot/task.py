@@ -197,4 +197,4 @@ async def driver_received_car_from_depot(update: Update, context: CustomContext)
         )
         
     await query.answer()
-    # await query.edit_message_reply_markup(reply_markup=None)
+    await query.edit_message_reply_markup(reply_markup=None)
