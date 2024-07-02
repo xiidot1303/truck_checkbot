@@ -19,6 +19,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     depot: Depot = await get_depot_by_tg_id(update.message.chat_id)
     if not depot:
         await update_message_reply_text(update, lang_dict['u r not depot manager'][0])
+        your_id_text = f"{await get_word('your id', update)}<code>{update.message.chat.id}</code>"
+        await bot_send_message(update, context, your_id_text)
         return
 
     # send langs
