@@ -15,7 +15,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     car: Car = await get_car_by_tg_id(update.message.chat_id)
     if not car:
         await update_message_reply_text(update, lang_dict['u r not driver'][0])
-        your_id_text = f"{await get_word('your id', update)}<code>{update.message.chat.id}</code>"
+        your_id_text = f"{lang_dict['your id'][0]}<code>{update.message.chat.id}</code>"
         await bot_send_message(update, context, your_id_text)
         return
 
