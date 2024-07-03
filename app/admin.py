@@ -4,6 +4,8 @@ from app.models import *
 class DepotAdmin(admin.ModelAdmin):
     list_display = ["title", "branch", "tg_id", "lat", "lon"]
     list_editable = ["title", "branch", "tg_id", "lat", "lon"]
+    search_fields = ['title']
+    list_filter = ['branch']
     list_display_links = None
 
 class CarAdmin(admin.ModelAdmin):
