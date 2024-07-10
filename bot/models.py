@@ -50,7 +50,7 @@ class Driver(models.Model):
 
     def __str__(self) -> str:
         try:
-            return self.name + '|' + str(self.car.number)
+            return self.name
         except:
             return super().__str__()
 

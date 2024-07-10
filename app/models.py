@@ -23,13 +23,13 @@ class Car(models.Model):
     title = models.CharField(null=True, blank=True, max_length=255)
     number = models.CharField(null=True, blank=True, max_length=64)
     tg_id = models.CharField(null=True, blank=True, max_length=16)
-    bot_user = models.OneToOneField('bot.Driver', null=True, blank=True, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
         return f"{self.title} {self.number}"
 
 class Task(models.Model):
     driver = models.ForeignKey('bot.Driver', on_delete=models.CASCADE, verbose_name="Водитель")
+    car = models.ForeignKey('app.Car', null=True, on_delete=models.PROTECT, verbose_name="Машина")
     depots = models.ManyToManyField(Depot, through='TaskDepot')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата")
     is_complete = models.BooleanField(default=False)

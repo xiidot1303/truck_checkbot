@@ -19,9 +19,8 @@ async def alert_driver_about_new_task_notification(bot: Bot, task: Task):
     await send_newsletter(bot, user_id, text, reply_markup=markup)
 
 async def alert_factory_about_driver_arriving_notification(bot, task: Task):
-    driver: Driver = await driver_of_task(task)
     factory: Factory = await get_factory()
-    text = await driver_info_string_for_factory(driver)
+    text = await driver_info_string_for_factory(task)
     i_get = InlineKeyboardButton(
         text=lang_dict['i received it'][1],
         callback_data=f'factory_receive_driver-{task.id}'
@@ -43,7 +42,7 @@ async def alert_driver_about_car_in_factory_notification(bot, task: Task):
 async def alert_depot_manager_about_driver_arriving_notification(bot: Bot, task: Task, depot: Depot, taskevent: TaskEvent):
     driver: Driver = await driver_of_task(task)
     user_id = depot.tg_id
-    text = await driver_info_string_for_depot(driver, user_id)
+    text = await driver_info_string_for_depot(task, user_id)
     i_get = InlineKeyboardButton(
         text=await get_word_depot_manager('i received it', chat_id=user_id),
         callback_data=f'depot_receive_driver-{taskevent.id}'
@@ -67,6 +66,6 @@ async def send_report_of_task_newsletter(bot: Bot, task: Task, file_path):
     await send_newsletter(
         bot,
         report_group.tg_id,
-        f"{task.driver.car}",
+        f"{task.car}",
         document=file_path
         )

@@ -10,10 +10,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if await is_driver_registred(update.message.chat_id):
         await update_message_reply_text(update, '.')
         return
-    
+    else:
     # check this driver ID is set on cars
-    car: Car = await get_car_by_tg_id(update.message.chat_id)
-    if not car:
+    # car: Car = await get_car_by_tg_id(update.message.chat_id)
+    # if not car:
         await update_message_reply_text(update, lang_dict['u r not driver'][0])
         your_id_text = f"{lang_dict['your id'][0]}<code>{update.message.chat.id}</code>"
         await bot_send_message(update, context, your_id_text)

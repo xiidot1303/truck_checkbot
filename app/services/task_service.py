@@ -62,7 +62,7 @@ def generate_excel_report_of_taks(task: Task):
     # Create a new DataFrame to add information at the top
     top_info = pd.DataFrame({
         'A': ['Дата', 'Машина', 'Водитель'], 
-        'B': [now().strftime('%Y-%m-%d %H:%M:%S'), task.driver.car, task.driver.name]
+        'B': [now().strftime('%Y-%m-%d %H:%M:%S'), task.car, task.driver.name]
     })
 
     # Define the file path

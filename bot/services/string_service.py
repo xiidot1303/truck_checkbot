@@ -10,12 +10,12 @@ async def new_task_for_driver_string(user_id):
     )
     return text
 
-async def driver_info_string_for_factory(driver: Driver):
+async def driver_info_string_for_factory(task: Task):
     @sync_to_async
-    def get_car_of_driver(driver):
-        return driver.car
+    def get_car_of_task(task):
+        return task.car
 
-    car: Car = await get_car_of_driver(driver)
+    car: Car = await get_car_of_task(task)
     text = "🚛 <b>{car_title_text}</b>: {car_title}\n\n🔢<b>{car_number_text}</b>: {car_number}"
     text = text.format(
         car_title_text = lang_dict['car'][1],
@@ -31,12 +31,12 @@ async def car_in_factory_string_for_driver(user_id):
     
     return text
 
-async def driver_info_string_for_depot(driver: Driver, user_id):
+async def driver_info_string_for_depot(task: Task, user_id):
     @sync_to_async
-    def get_car_of_driver(driver):
-        return driver.car
+    def get_car_of_task(task):
+        return task.car
 
-    car: Car = await get_car_of_driver(driver)
+    car: Car = await get_car_of_task(task)
     text = "🚛 <b>{car_title_text}</b>: {car_title}\n\n🔢<b>{car_number_text}</b>: {car_number}"
     text = text.format(
         car_title_text = await get_word_depot_manager('car', chat_id=user_id),
