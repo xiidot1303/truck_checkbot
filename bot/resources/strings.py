@@ -91,7 +91,7 @@ lang_dict = {
         ],
 
     "depot received car": [
-        "Mashina omborxona xodimlari tomonidan qabul qilib olindi."
+        "Mashina omborxona xodimlari tomonidan qabul qilib olindi.",
         "Автомобиль получен в склад", 
         ],
 
