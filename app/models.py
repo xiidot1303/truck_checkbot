@@ -58,20 +58,31 @@ class TaskDepot(models.Model):
         verbose_name = "Склад заданий"
         verbose_name_plural = "Склады заданий"
 
-class TaskEvent(models.Model):
-    EVENT_TYPES = [
-        ('arrive_to_factory', 'Водитель прибыл на завод'),
-        ('in_factory', 'На заводе'),
-        ('arrive_to_depot', 'Водитель прибыл на склад'),
-        ('in_depot', 'В складе'),
-    ]
+EVENT_TYPES = [
+    ('arrive_to_factory', 'Водитель прибыл на завод'),
+    ('in_factory', 'На заводе'),
+    ('arrive_to_depot', 'Водитель прибыл на склад'),
+    ('in_depot', 'В складе'),
+]
 
+class TaskEvent(models.Model):
     task = models.ForeignKey(Task, related_name='events', on_delete=models.CASCADE, verbose_name="Задание")
     event_type = models.CharField(max_length=50, choices=EVENT_TYPES, verbose_name="Тип")
     start_time = models.DateTimeField(null=True, blank=True, verbose_name="Время начала") 
     end_time = models.DateTimeField(null=True, blank=True, verbose_name="Конечное время")
     depot = models.ForeignKey(Depot, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Склад")
+    duration_norm = models.IntegerField(null=True, blank=True, verbose_name="Норма")
 
     class Meta:
         verbose_name = "Событие"
         verbose_name_plural = "События"
+
+class EvenDurationNorm(models.Model):
+    event_type = models.CharField(max_length=50, choices=EVENT_TYPES, verbose_name="Тип")
+    depot = models.ForeignKey(Depot, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Склад")
+    duration = models.IntegerField(verbose_name="Длительность (Минут)")
+
+    class Meta:
+        unique_together = ("event_type", "depot")
+        verbose_name = "Норма для события задачи"
+        verbose_name_plural = "Норма для события задачи"

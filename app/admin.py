@@ -20,7 +20,7 @@ class TaskDepotInline(admin.TabularInline):
 class TaskEventInline(admin.TabularInline):
     model = TaskEvent
     extra = 0
-    readonly_fields = ['event_type', 'start_time', 'end_time', 'spend_time', 'depot']
+    readonly_fields = ['event_type', 'start_time', 'end_time', 'spend_time', 'duration_norm', 'depot']
 
     def spend_time(self, obj):
         if obj.end_time and obj.start_time:
@@ -44,8 +44,13 @@ class TaskAdmin(admin.ModelAdmin):
         }),
     )
 
+class EvenDurationNormAdmin(admin.ModelAdmin):
+    def get_list_display(self, request):
+        return [field.name for field in self.model._meta.concrete_fields]
+
 admin.site.register(Depot, DepotAdmin)
 admin.site.register(Car, CarAdmin)
 admin.site.register(Task, TaskAdmin)
+admin.site.register(EvenDurationNorm, EvenDurationNormAdmin)
 # admin.site.register(TaskDepot)
 # admin.site.register(TaskEvent)

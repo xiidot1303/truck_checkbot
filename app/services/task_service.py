@@ -1,5 +1,5 @@
 from app.services import *
-from app.models import Task, TaskEvent, Depot, TaskDepot
+from app.models import Task, TaskEvent, Depot, TaskDepot, EvenDurationNorm
 from django.utils.timezone import now
 import pandas as pd
 import os
@@ -32,6 +32,13 @@ async def get_taskevent_by_task_and_event_type(task: Task, event_type) -> TaskEv
 async def complete_taskevent(taskevent: TaskEvent):
     end_time = await datetime_now()
     taskevent.end_time = end_time
+    # set duration norm 
+    try:
+        duration_norm = await EvenDurationNorm.objects.aget(event_type = taskevent.event_type, depot = taskevent.depot)
+        taskevent.duration_norm = duration_norm.duration
+    except:
+        None
+
     await taskevent.asave()
     return
 
@@ -53,7 +60,8 @@ def generate_excel_report_of_taks(task: Task):
             '': event.get_event_type_display() + depot_title,
             'Время начала': event.start_time,
             'Конечное время': event.end_time,
-            'Пройденное время (Минуты)': round(delta.seconds / 60, 2)
+            'Пройденное время (Минуты)': round(delta.seconds / 60, 2),
+            'Норма (Минуты)': event.duration_norm
         })
 
     # Convert the data to a pandas DataFrame
