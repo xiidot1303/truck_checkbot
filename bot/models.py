@@ -43,7 +43,11 @@ class Driver(models.Model):
     name = models.CharField(null=True, blank=True, max_length=256, default='', verbose_name='Имя')
     username = models.CharField(null=True, blank=True, max_length=256, verbose_name='username')
     firstname = models.CharField(null=True, blank=True, max_length=256, verbose_name='Никнейм')
-    lang = models.CharField(null=True, blank=True, max_length=4, verbose_name='')
+    LANG_CHOICES = [
+        ("uz", "O'zbekcha"),
+        ("ru", "Русский")
+    ]
+    lang = models.CharField(null=True, blank=True, max_length=4, verbose_name='Язык', choices=LANG_CHOICES, default='uz')
     date = models.DateTimeField(db_index=True, null=True, auto_now_add=True, blank=True, verbose_name='Дата регистрации')
     lat = models.CharField(null=True, blank=True, max_length=32)
     lon = models.CharField(null=True, blank=True, max_length=32)
