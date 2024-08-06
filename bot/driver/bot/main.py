@@ -8,7 +8,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # check driver is registred or not
     if await is_driver_registred(update.message.chat_id):
-        await update_message_reply_text(update, '.')
+        text = await get_word('you are successfully registred', update)
+        await update_message_reply_text(update, text)
         return
     else:
     # check this driver ID is set on cars

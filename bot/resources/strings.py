@@ -134,7 +134,10 @@ lang_dict = {
         ""
         ],
 
-    "": ["", ""],
+    "you are successfully registred": [
+        "🥳 Siz muvaffaqiyatli ro'yxatdan o'tgansiz va botdan foydalana olasiz.", 
+        "🥳 Вы успешно зарегистрированы и можете использовать бота."
+        ],
 
     "": ["", ""],
 
