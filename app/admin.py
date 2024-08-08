@@ -33,11 +33,17 @@ class TaskEventInline(admin.TabularInline):
     spend_time.short_description = "Пройденное время (Минуты)"
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ['driver', 'car', 'created_at']
+    list_display = ['driver', 'depot', 'car', 'created_at']
     list_filter = ['driver', 'car']
     search_fields = ['driver', 'car']
     inlines = [TaskDepotInline, TaskEventInline]
 
+    def depot(self, obj):
+        t = ""
+        for depot in obj.depots.all():
+            t += f"{depot.title}, "
+        return t
+    depot.short_description = "Адрес"
     fieldsets = (
         ('', {
             'fields': ['driver', 'car'],
