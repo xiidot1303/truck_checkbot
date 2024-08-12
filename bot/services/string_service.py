@@ -3,10 +3,16 @@ from bot.models import *
 from app.models import *
 from asgiref.sync import sync_to_async
 
-async def new_task_for_driver_string(user_id):
-    text = "{set_new_task_text}"
+async def new_task_for_driver_string(user_id, task: Task):
+    @sync_to_async
+    def get_car_of_task(task):
+        return task.car
+    car: Car = await get_car_of_task(task)
+    text = "{set_new_task_text}\n\n{car_text}: {car}"
     text = text.format(
-        set_new_task_text = await get_word_driver('set new task for driver', chat_id=user_id)
+        set_new_task_text = await get_word_driver('set new task for driver', chat_id=user_id),
+        car_text = await get_word_driver('car', chat_id=user_id),
+        car = f"{car.title}"
     )
     return text
 

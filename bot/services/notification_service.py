@@ -10,7 +10,7 @@ async def alert_driver_about_new_task_notification(bot: Bot, task: Task):
     driver: Driver = task.driver
     user_id = driver.user_id
     task_id = task.id
-    text = await new_task_for_driver_string(user_id)
+    text = await new_task_for_driver_string(user_id, task)
     i_get = InlineKeyboardButton(
         text=await get_word_driver('i received it', chat_id=user_id),
         callback_data=f'driver_receive_task-{task_id}'
