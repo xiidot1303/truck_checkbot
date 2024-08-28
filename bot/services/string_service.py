@@ -7,12 +7,15 @@ async def new_task_for_driver_string(user_id, task: Task):
     @sync_to_async
     def get_car_of_task(task):
         return task.car
+    depot = await task.get_next_depot
     car: Car = await get_car_of_task(task)
-    text = "{set_new_task_text}\n\n{car_text}: {car}"
+    text = "{set_new_task_text}\n\n{car_text}: {car}\n{destination_text}: {destination}"
     text = text.format(
         set_new_task_text = await get_word_driver('set new task for driver', chat_id=user_id),
         car_text = await get_word_driver('car', chat_id=user_id),
-        car = f"{car.title}"
+        car = f"{car.title}",
+        destination_text = await get_word_driver('destination', chat_id=user_id),
+        destination = depot.title
     )
     return text
 
