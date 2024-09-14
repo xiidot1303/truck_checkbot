@@ -1,0 +1,7 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+  <a href="{% url 'task_report_by_date' %}" 
+    class="button btn btn-secondary" style="margin-left: 10px;">Загрузить отчет</a>
+  {{ block.super }}
+{% endblock %}

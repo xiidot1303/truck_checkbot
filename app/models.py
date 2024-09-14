@@ -43,6 +43,16 @@ class Task(models.Model):
             return depot_relations[self.current_depot_index].depot
         return None
 
+    @property
+    @sync_to_async
+    def get_car(self):
+        return f"{self.car}"
+
+    @property
+    @sync_to_async
+    def get_driver(self):
+        return f"{self.driver}"
+
     class Meta:
         verbose_name = "Задание"
         verbose_name_plural = "Задания"
@@ -76,6 +86,23 @@ class TaskEvent(models.Model):
     class Meta:
         verbose_name = "Событие"
         verbose_name_plural = "События"
+
+    @property
+    @sync_to_async
+    def spend_time(self):
+        obj = self
+        if obj.end_time and obj.start_time:
+            delta = obj.end_time - obj.start_time
+            minute = round(delta.seconds / 60, 2)
+            return minute
+        else:
+            return ""
+
+    @property
+    # @sync_to_async
+    async def difference_with_norm(self):
+        difference = await self.spend_time or 0 - self.duration_norm or 0
+        return difference
 
 class EvenDurationNorm(models.Model):
     event_type = models.CharField(max_length=50, choices=EVENT_TYPES, verbose_name="Тип")

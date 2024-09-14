@@ -33,6 +33,7 @@ class TaskEventInline(admin.TabularInline):
     spend_time.short_description = "Пройденное время (Минуты)"
 
 class TaskAdmin(admin.ModelAdmin):
+    change_list_template = 'admin/task/task_change_list.html'
     list_display = ['driver', 'depot', 'car', 'created_at']
     list_filter = ['driver', 'car']
     search_fields = ['driver', 'car']

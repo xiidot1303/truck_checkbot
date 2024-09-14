@@ -8,7 +8,7 @@ from django.contrib.auth.views import (
 )
 
 from app.views import (
-    main
+    main, task
 )
 
 urlpatterns = [
@@ -23,5 +23,7 @@ urlpatterns = [
     # files
     re_path(r'^files/(?P<path>.*)$', main.get_file),
 
+    # task
+    path('task-report-by-date', task.task_report_by_date, name='task_report_by_date'),
 
 ]

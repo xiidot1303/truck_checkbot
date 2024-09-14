@@ -46,6 +46,10 @@ async def get_taskdepot_by_task_and_depot(task: Task, depot: Depot) -> TaskDepot
     obj = await TaskDepot.objects.aget(task = task, depot = depot)
     return obj
 
+async def filter_completed_tasks():
+    query = Task.objects.filter(is_complete = True)
+    return query
+
 @sync_to_async
 def generate_excel_report_of_taks(task: Task):
     # Filter TaskEvent data based on some criteria
