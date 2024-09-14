@@ -88,8 +88,7 @@ class TaskEvent(models.Model):
         verbose_name_plural = "События"
 
     @property
-    @sync_to_async
-    def spend_time(self):
+    async def spend_time(self):
         obj = self
         if obj.end_time and obj.start_time:
             delta = obj.end_time - obj.start_time
@@ -99,9 +98,10 @@ class TaskEvent(models.Model):
             return ""
 
     @property
-    # @sync_to_async
     async def difference_with_norm(self):
-        difference = await self.spend_time or 0 - self.duration_norm or 0
+        spend_time = await self.spend_time if await self.spend_time else 0
+        duration_norm = self.duration_norm if self.duration_norm else 0
+        difference = spend_time - duration_norm
         return difference
 
 class EvenDurationNorm(models.Model):
