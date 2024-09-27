@@ -35,7 +35,7 @@ class TaskEventInline(admin.TabularInline):
 
 class TaskAdmin(admin.ModelAdmin):
     change_list_template = 'admin/task/task_change_list.html'
-    list_display = ['driver', 'depot', 'car', 'created_at']
+    list_display = ['driver', 'depot', 'car', 'created_at', 'is_complete']
     list_filter = ['driver', 'car', ('created_at', DateRangeFilter)]
     # search_fields = ['driver', 'car']
     inlines = [TaskDepotInline, TaskEventInline]
@@ -51,6 +51,14 @@ class TaskAdmin(admin.ModelAdmin):
             'fields': ['driver', 'car'],
         }),
     )
+
+    def changelist_view(self, request, extra_context=None):
+        # Add the URL parameters to the context
+        if extra_context is None:
+            extra_context = {}
+        extra_context['created_at__range__gte'] = request.GET.get('created_at__range__gte', None)
+        extra_context['created_at__range__lte'] = request.GET.get('created_at__range__lte', None)
+        return super().changelist_view(request, extra_context=extra_context)
 
 class EvenDurationNormAdmin(admin.ModelAdmin):
     def get_list_display(self, request):

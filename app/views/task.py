@@ -5,6 +5,11 @@ from openpyxl.utils import get_column_letter
 from app.services.task_service import *
 
 async def task_report_by_date(request):
+    start_date = request.GET.get('created_at__range__gte')
+    end_date = request.GET.get('created_at__range__lte')
+    start_date = "10.10.2020" if not start_date else start_date
+    end_date = "10.10.2100" if not end_date else end_date
+
     # Create a new workbook and select the active worksheet
     wb = Workbook()
     ws = wb.active
@@ -21,7 +26,7 @@ async def task_report_by_date(request):
         ws.append(header)
     
     # Query the database
-    tasks = await filter_completed_tasks()  # Replace 'YourModel' with your actual model name
+    tasks = await filter_completed_tasks_by_date_range(start_date, end_date)  # Replace 'YourModel' with your actual model name
 
     # Example: Add your tasks to the worksheet
     last_period = date(1900, 1, 1)

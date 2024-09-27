@@ -5,6 +5,7 @@ import pandas as pd
 import os
 from django.conf import settings
 from asgiref.sync import sync_to_async
+from django.utils import timezone
 
 async def get_task_by_id(id) -> Task:
     obj = await Task.objects.aget(id=id)
@@ -46,9 +47,22 @@ async def get_taskdepot_by_task_and_depot(task: Task, depot: Depot) -> TaskDepot
     obj = await TaskDepot.objects.aget(task = task, depot = depot)
     return obj
 
-async def filter_completed_tasks():
-    query = Task.objects.filter(is_complete = True)
+async def filter_completed_tasks_by_date_range(start_date, end_date):
+    # create start date obj
+    date_obj = datetime.strptime(start_date, "%d.%m.%Y")
+    year = date_obj.year
+    month = date_obj.month
+    day = date_obj.day
+    start_date = timezone.datetime(year, month, day)
+    # create end date obj
+    date_obj = datetime.strptime(end_date, "%d.%m.%Y")
+    year = date_obj.year
+    month = date_obj.month
+    day = date_obj.day
+    end_date = timezone.datetime(year, month, day, 23, 59)
+    query = Task.objects.filter(is_complete = True, created_at__gte=start_date, created_at__lte=end_date)
     return query
+
 
 @sync_to_async
 def generate_excel_report_of_taks(task: Task):

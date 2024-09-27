@@ -32,7 +32,7 @@ class Task(models.Model):
     car = models.ForeignKey('app.Car', null=True, on_delete=models.PROTECT, verbose_name="Машина")
     depots = models.ManyToManyField(Depot, through='TaskDepot')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата")
-    is_complete = models.BooleanField(default=False)
+    is_complete = models.BooleanField(default=False, verbose_name="Завершено?")
     current_depot_index = models.PositiveIntegerField(default=0)
 
     @property
