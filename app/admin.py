@@ -1,5 +1,6 @@
 from django.contrib import admin
 from app.models import *
+from rangefilter.filters import DateRangeFilter
 
 class DepotAdmin(admin.ModelAdmin):
     list_display = ["title", "branch", "tg_id", "lat", "lon"]
@@ -35,8 +36,8 @@ class TaskEventInline(admin.TabularInline):
 class TaskAdmin(admin.ModelAdmin):
     change_list_template = 'admin/task/task_change_list.html'
     list_display = ['driver', 'depot', 'car', 'created_at']
-    list_filter = ['driver', 'car']
-    search_fields = ['driver', 'car']
+    list_filter = ['driver', 'car', ('created_at', DateRangeFilter)]
+    # search_fields = ['driver', 'car']
     inlines = [TaskDepotInline, TaskEventInline]
 
     def depot(self, obj):
