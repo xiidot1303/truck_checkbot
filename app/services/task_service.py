@@ -17,9 +17,12 @@ async def get_taskevent_by_id(id) -> TaskEvent:
 
 async def create_taskevent(task: Task, event_type, depot = None) -> TaskEvent:
     start_time = await datetime_now()
-    obj: TaskEvent = await TaskEvent.objects.acreate(
-        task = task, event_type = event_type, start_time = start_time
+    obj, is_created = await TaskEvent.objects.aget_or_create(
+        task = task, event_type = event_type, defaults={
+            'start_time': start_time
+            }
     )
+    obj: TaskEvent
     obj.depot = depot
     await obj.asave()
     return obj
