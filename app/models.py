@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from asgiref.sync import sync_to_async
+from datetime import datetime, timedelta
 
 class Depot(models.Model):
     code = models.IntegerField(null=True, blank=False)
@@ -82,6 +83,7 @@ class TaskEvent(models.Model):
     end_time = models.DateTimeField(null=True, blank=True, verbose_name="Конечное время")
     depot = models.ForeignKey(Depot, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Склад")
     duration_norm = models.IntegerField(null=True, blank=True, verbose_name="Норма")
+    schedule_time = models.TimeField(null=True, blank=True, verbose_name="Время по графику")
 
     class Meta:
         verbose_name = "Событие"
@@ -104,6 +106,25 @@ class TaskEvent(models.Model):
         difference = spend_time - duration_norm
         return difference
 
+    @property
+    async def difference_with_schedule(self):
+        if self.end_time and self.schedule_time:
+            end_time = self.end_time.time()
+            end_datetime = datetime.combine(datetime.today(), end_time)
+            schedule_datetime = datetime.combine(datetime.today(), self.schedule_time)
+            difference = schedule_datetime - end_datetime
+            difference: timedelta
+            return round(difference.seconds / 360, 2)
+        return 0
+        
+    @property
+    @sync_to_async
+    def get_depot(self):
+        if self.depot:
+            return self.depot
+        else:
+            return self.task.depots.filter().order_by('taskdepot__order').first()
+
 class EvenDurationNorm(models.Model):
     event_type = models.CharField(max_length=50, choices=EVENT_TYPES, verbose_name="Тип")
     depot = models.ForeignKey(Depot, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Склад")
@@ -113,3 +134,25 @@ class EvenDurationNorm(models.Model):
         unique_together = ("event_type", "depot")
         verbose_name = "Норма для события задачи"
         verbose_name_plural = "Норма для события задачи"
+
+class TaskSchedule(models.Model):
+    WEEKDAY_CHOICES = [
+        (0, 'Понедельник'),
+        (1, 'Вторник'),
+        (2, 'Среда'),
+        (3, 'Четверг'),
+        (4, 'Пятница'),
+        (5, 'Суббота'),
+        (6, 'Воскресенье')
+    ]
+    depot = models.ForeignKey(Depot, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Склад")
+    arrive_to_factory_time = models.TimeField(null=True, blank=False, verbose_name='Время прибытия водителя на завод')
+    in_factory_time = models.TimeField(null=True, blank=False, verbose_name = 'Время окончания загрузки')
+    arrive_to_depot_time = models.TimeField(null=True, blank=False, verbose_name='Время прибытия на склад')
+    in_depot_time = models.TimeField(null=True, blank=False, verbose_name = 'Время окончания разгрузки')
+    weekday = models.IntegerField(null=True, blank=False, choices=WEEKDAY_CHOICES, verbose_name='Будний день')
+
+    class Meta:
+        verbose_name = 'График водителей'
+        verbose_name_plural = 'Графики водителей'
+        unique_together = ("depot", "weekday")

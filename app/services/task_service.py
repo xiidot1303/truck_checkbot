@@ -1,5 +1,5 @@
 from app.services import *
-from app.models import Task, TaskEvent, Depot, TaskDepot, EvenDurationNorm
+from app.models import Task, TaskEvent, Depot, TaskDepot, EvenDurationNorm, TaskSchedule
 from django.utils.timezone import now
 import pandas as pd
 import os
@@ -42,6 +42,10 @@ async def complete_taskevent(taskevent: TaskEvent):
         taskevent.duration_norm = duration_norm.duration
     except:
         None
+
+    if task_schedule := await TaskSchedule.objects.filter(depot__id = (await taskevent.get_depot).id).afirst():
+        task_schedule: TaskSchedule
+        taskevent.schedule_time = getattr(task_schedule, f'{taskevent.event_type}_time')
 
     await taskevent.asave()
     return

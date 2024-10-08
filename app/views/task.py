@@ -42,9 +42,9 @@ async def task_report_by_date(request):
             async for event in task.events.filter():
                 event: TaskEvent
                 data = [
-                    await event.spend_time,
-                    event.duration_norm,
-                    await event.difference_with_norm
+                    event.end_time.strftime('%H:%M') if event.end_time else "",
+                    event.schedule_time.strftime("%H:%M") if event.schedule_time else "",
+                    await event.difference_with_schedule
                 ]
                 row_data += data
             ws.append(row_data)
