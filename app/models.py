@@ -114,7 +114,7 @@ class TaskEvent(models.Model):
             schedule_datetime = datetime.combine(datetime.today(), self.schedule_time)
             difference = schedule_datetime - end_datetime
             difference: timedelta
-            return round(difference.seconds / 360, 2)
+            return round(difference.total_seconds() / 3600, 2)
         return 0
         
     @property
