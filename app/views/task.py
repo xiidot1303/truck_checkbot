@@ -53,7 +53,7 @@ async def task_report_by_date(request):
                 row_data += data
             # add empty values in fields "Mashinaning zavodga qaytib kelishi"
             row_data += ["", "", ""]
-            row_data += [str(total_differences)]
+            row_data += [str(round(total_differences, 2))]
             ws.append(row_data)
 
         last_period = task.created_at.date()
