@@ -40,7 +40,7 @@ async def task_report_by_date(request):
                 await task.get_car, await task.get_driver
             ]
             total_differences = 0
-            async for event in task.events.filter():
+            async for event in task.events.filter().order_by('id'):
                 event: TaskEvent
                 difference = await event.difference_with_schedule
                 if difference < 0:
