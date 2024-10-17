@@ -75,7 +75,11 @@ async def filter_completed_tasks_by_date_range(start_date, end_date):
     month = date_obj.month
     day = date_obj.day
     end_date = timezone.datetime(year, month, day, 23, 59)
-    query = Task.objects.filter(is_complete = True, created_at__gte=start_date, created_at__lte=end_date)
+    query = Task.objects.filter(
+        is_complete = True, 
+        created_at__gte=start_date, 
+        created_at__lte=end_date
+        ).order_by('-created_at')
     return query
 
 
