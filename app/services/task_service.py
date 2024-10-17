@@ -49,7 +49,11 @@ async def complete_taskevent(taskevent: TaskEvent):
         weekday = task.created_at.weekday()
         ).afirst():
         task_schedule: TaskSchedule
-        taskevent.schedule_time = getattr(task_schedule, f'{taskevent.event_type}_time')
+        schedule_time = getattr(task_schedule, f'{taskevent.event_type}_time')
+        schedule_time_add_day = getattr(task_schedule, f'{taskevent.event_type}_time_add_day')
+        schedule_date = task.created_at + timedelta(days=schedule_time_add_day)
+        schedule_datetime = datetime.combine(schedule_date, schedule_time)
+        taskevent.schedule_datetime = schedule_datetime
 
     await taskevent.asave()
     return

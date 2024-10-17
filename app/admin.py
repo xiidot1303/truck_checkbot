@@ -21,8 +21,8 @@ class TaskDepotInline(admin.TabularInline):
 class TaskEventInline(admin.TabularInline):
     model = TaskEvent
     extra = 0
-    fields = ['event_type', 'start_time', 'end_time', 'spend_time', 'schedule_time', 'depot']
-    readonly_fields = ['event_type', 'start_time', 'end_time', 'spend_time', 'schedule_time', 'depot']
+    fields = ['event_type', 'start_time', 'end_time', 'spend_time', 'schedule_datetime', 'depot']
+    readonly_fields = ['event_type', 'start_time', 'end_time', 'spend_time', 'schedule_datetime', 'depot']
 
     def spend_time(self, obj):
         if obj.end_time and obj.start_time:
@@ -71,6 +71,19 @@ class TaskScheduleAdmin(admin.ModelAdmin):
         'arrive_to_depot_time', 'in_depot_time', 'weekday'
         ]
     list_filter = ['depot', 'weekday']
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                ('depot'),
+                ('arrive_to_factory_time', 'arrive_to_factory_time_add_day'), 
+                ('in_factory_time', 'in_factory_time_add_day'),
+                ('arrive_to_depot_time', 'arrive_to_depot_time_add_day'),
+                ('in_depot_time', 'in_depot_time_add_day'),
+                ('weekday'),
+                )
+        }),
+    )
 
 admin.site.register(Depot, DepotAdmin)
 admin.site.register(Car, CarAdmin)

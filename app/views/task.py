@@ -46,7 +46,7 @@ async def task_report_by_date(request):
                 if difference < 0:
                     total_differences += difference
                 data = [
-                    event.schedule_time.strftime("%H:%M") if event.schedule_time else "",
+                    event.schedule_datetime.strftime("%H:%M") if event.schedule_datetime else "",
                     event.end_time.strftime('%H:%M') if event.end_time else "",
                     difference
                 ]

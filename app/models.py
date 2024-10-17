@@ -84,6 +84,7 @@ class TaskEvent(models.Model):
     depot = models.ForeignKey(Depot, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Склад")
     duration_norm = models.IntegerField(null=True, blank=True, verbose_name="Норма")
     schedule_time = models.TimeField(null=True, blank=True, verbose_name="Время по графику")
+    schedule_datetime = models.DateTimeField(null=True, blank=True, verbose_name="Дата и время по графику")
 
     class Meta:
         verbose_name = "Событие"
@@ -108,10 +109,10 @@ class TaskEvent(models.Model):
 
     @property
     async def difference_with_schedule(self):
-        if self.end_time and self.schedule_time:
+        if self.end_time and self.schedule_datetime:
             task = await self.get_task
             end_datetime = self.end_time
-            schedule_datetime = datetime.combine(task.created_at, self.schedule_time)
+            schedule_datetime = self.schedule_datetime
             difference = schedule_datetime - end_datetime
             difference: timedelta
             return round(difference.total_seconds() / 3600, 2)
@@ -152,9 +153,13 @@ class TaskSchedule(models.Model):
     ]
     depot = models.ForeignKey(Depot, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Склад")
     arrive_to_factory_time = models.TimeField(null=True, blank=False, verbose_name='Время прибытия водителя на завод')
+    arrive_to_factory_time_add_day = models.IntegerField(null=True, blank=False, default=0, verbose_name='+ день')
     in_factory_time = models.TimeField(null=True, blank=False, verbose_name = 'Время окончания загрузки')
+    in_factory_time_add_day = models.IntegerField(null=True, blank=False, default=0, verbose_name='+ день')
     arrive_to_depot_time = models.TimeField(null=True, blank=False, verbose_name='Время прибытия на склад')
+    arrive_to_depot_time_add_day = models.IntegerField(null=True, blank=False, default=0, verbose_name='+ день')
     in_depot_time = models.TimeField(null=True, blank=False, verbose_name = 'Время окончания разгрузки')
+    in_depot_time_add_day = models.IntegerField(null=True, blank=False, default=0, verbose_name='+ день')
     weekday = models.IntegerField(null=True, blank=False, choices=WEEKDAY_CHOICES, verbose_name='Будний день')
 
     class Meta:
