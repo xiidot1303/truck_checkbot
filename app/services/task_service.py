@@ -35,6 +35,7 @@ async def get_taskevent_by_task_and_event_type(task: Task, event_type) -> TaskEv
 
 async def complete_taskevent(taskevent: TaskEvent):
     end_time = await datetime_now()
+    task: Task = await taskevent.get_task
     taskevent.end_time = end_time
     # set duration norm 
     try:
@@ -45,7 +46,7 @@ async def complete_taskevent(taskevent: TaskEvent):
     now: datetime = await datetime_now()
     if task_schedule := await TaskSchedule.objects.filter(
         depot__id = (await taskevent.get_depot).id,
-        weekday = now.weekday()
+        weekday = task.created_at.weekday()
         ).afirst():
         task_schedule: TaskSchedule
         taskevent.schedule_time = getattr(task_schedule, f'{taskevent.event_type}_time')

@@ -125,6 +125,11 @@ class TaskEvent(models.Model):
         else:
             return self.task.depots.filter().order_by('taskdepot__order').first()
 
+    @property
+    @sync_to_async
+    def get_task(self):
+        return self.task
+
 class EvenDurationNorm(models.Model):
     event_type = models.CharField(max_length=50, choices=EVENT_TYPES, verbose_name="Тип")
     depot = models.ForeignKey(Depot, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Склад")
