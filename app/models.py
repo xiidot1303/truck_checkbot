@@ -109,9 +109,9 @@ class TaskEvent(models.Model):
     @property
     async def difference_with_schedule(self):
         if self.end_time and self.schedule_time:
-            end_time = self.end_time.time()
-            end_datetime = datetime.combine(datetime.today(), end_time)
-            schedule_datetime = datetime.combine(datetime.today(), self.schedule_time)
+            task = await self.get_task
+            end_datetime = self.end_time
+            schedule_datetime = datetime.combine(task.created_at, self.schedule_time)
             difference = schedule_datetime - end_datetime
             difference: timedelta
             return round(difference.total_seconds() / 3600, 2)
