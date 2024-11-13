@@ -10,6 +10,16 @@ async def task_report_by_date(request):
     start_date = "10.10.2020" if not start_date or start_date == 'None' else start_date
     end_date = "10.10.2100" if not end_date or end_date == 'None' else end_date
 
+    wb = await create_task_report(start_date, end_date)
+
+    # Save the workbook to a response
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="schedule_report.xlsx"'
+    wb.save(response)
+    return response
+
+
+async def create_task_report(start_date: str, end_date: str) -> Workbook:
     # Create a new workbook and select the active worksheet
     wb = Workbook()
     ws = wb.active
@@ -24,7 +34,7 @@ async def task_report_by_date(request):
     # Add the headers to the worksheet
     for header in headers:
         ws.append(header)
-    
+
     # Query the database
     tasks = await filter_completed_tasks_by_date_range(start_date, end_date)  # Replace 'YourModel' with your actual model name
 
@@ -32,11 +42,11 @@ async def task_report_by_date(request):
     last_period = date(1900, 1, 1)
     async for task in tasks:
         task: Task
-        async for taskdepot in task.depots.filter(): 
+        async for taskdepot in task.depots.filter():
             taskdepot: TaskDepot
             row_data = [
-                task.created_at.strftime("%d.%m.%Y") if last_period != task.created_at.date() else "", 
-                taskdepot.branch, 
+                task.created_at.strftime("%d.%m.%Y") if last_period != task.created_at.date() else "",
+                taskdepot.branch,
                 await task.get_car, await task.get_driver
             ]
             total_differences = 0
@@ -63,7 +73,7 @@ async def task_report_by_date(request):
         cell = ws.cell(row=1, column=col)
         cell.font = header_font
         cell.alignment = Alignment(horizontal="center", vertical="center")
-    
+
     # Set column widths for better readability
     column_widths = [12, 12, 12, 20, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 25]
     for i, width in enumerate(column_widths, start=1):
@@ -109,8 +119,4 @@ async def task_report_by_date(request):
         for col in range(20, 21):  # Columns T
             ws.cell(row=row, column=col).fill = PatternFill(start_color="fffbe5", end_color="fffbe5", fill_type="solid")
 
-    # Save the workbook to a response
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="schedule_report.xlsx"'
-    wb.save(response)
-    return response
+    return wb

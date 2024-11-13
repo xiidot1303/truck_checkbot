@@ -2,6 +2,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import register_events, DjangoJobStore
 from app.scheduled_job import one_c_job
 from asgiref.sync import async_to_sync
+from .send_report import sync_send_report
 
 class jobs:
     scheduler = BackgroundScheduler(timezone='Asia/Tashkent')
@@ -9,3 +10,4 @@ class jobs:
     register_events(scheduler)
     # scheduler.add_job(one_c_job.update_depots, 'interval', minutes=20)
     scheduler.add_job(one_c_job.update_cars, 'interval', minutes=20)
+    scheduler.add_job(sync_send_report, 'cron', hour=18)
