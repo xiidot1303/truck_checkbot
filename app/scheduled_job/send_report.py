@@ -2,17 +2,12 @@ import io
 import asyncio
 from datetime import datetime, timedelta
 
-from telegram import Bot, InputFile
-from telegram.ext import Application
+from telegram import InputFile
 
 from bot.models import ReportGroup
 from app.views.task import create_task_report
 from bot.services.driver_service import get_report_group
-
-from config import DEPOT_MANAGERBOT_API_TOKEN
-
-depot_manager_app = Application.builder().token(DEPOT_MANAGERBOT_API_TOKEN).updater(None).build()
-bot: Bot = depot_manager_app.bot
+from bot.driver.control.updater import application as driver_app
 
 
 async def send_report():
@@ -26,8 +21,8 @@ async def send_report():
     file_report.seek(0)
 
     group: ReportGroup = await get_report_group()
-    await bot.send_document(
-        group.tg_id,
+    await driver_app.bot.send_document(
+        group.tg_id_2,
         InputFile(file_report, filename=f"{now.strftime('%Y_%m_%d')}_.xlsx")
     )
 
