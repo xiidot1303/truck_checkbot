@@ -10,4 +10,4 @@ class jobs:
     register_events(scheduler)
     # scheduler.add_job(one_c_job.update_depots, 'interval', minutes=20)
     scheduler.add_job(one_c_job.update_cars, 'interval', minutes=20)
-    scheduler.add_job(sync_send_report, 'cron', hour=18)
+    scheduler.add_job(sync_send_report, 'cron', hour=12)
