@@ -62,7 +62,7 @@ async def get_taskdepot_by_task_and_depot(task: Task, depot: Depot) -> TaskDepot
     obj = await TaskDepot.objects.aget(task = task, depot = depot)
     return obj
 
-async def filter_completed_tasks_by_date_range(start_date, end_date):
+async def filter_completed_tasks_by_date_range(start_date, end_date, is_complete: bool = None):
     # create start date obj
     date_obj = datetime.strptime(start_date, "%d.%m.%Y")
     year = date_obj.year
@@ -76,10 +76,13 @@ async def filter_completed_tasks_by_date_range(start_date, end_date):
     day = date_obj.day
     end_date = timezone.datetime(year, month, day, 23, 59)
     query = Task.objects.filter(
-        is_complete = True, 
         created_at__gte=start_date, 
         created_at__lte=end_date
         ).order_by('-created_at')
+
+    if isinstance(is_complete, bool):
+        query = query.filter(is_complete=is_complete)
+
     return query
 
 
