@@ -19,7 +19,7 @@ async def task_report_by_date(request):
     return response
 
 
-async def create_task_report(start_date: str, end_date: str, is_complete: bool = None) -> Workbook:
+async def create_task_report(start_date: str, end_date: str, is_complete: bool = None, tasks: list = None) -> Workbook:
     # Create a new workbook and select the active worksheet
     wb = Workbook()
     ws = wb.active
@@ -36,7 +36,8 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
         ws.append(header)
 
     # Query the database
-    tasks = await filter_completed_tasks_by_date_range(start_date, end_date, is_complete=is_complete)  # Replace 'YourModel' with your actual model name
+    if not tasks:
+        tasks = await filter_completed_tasks_by_date_range(start_date, end_date, is_complete=is_complete)
 
     # Example: Add your tasks to the worksheet
     last_period = date(1900, 1, 1)
