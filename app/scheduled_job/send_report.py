@@ -11,6 +11,11 @@ from bot.utils.bot_functions import driver_app, send_newsletter
 from app.services.task_service import filter_completed_tasks_by_date_range
 
 
+async def async_list(tasks):
+    for task in tasks:
+        yield task
+
+
 async def send_report():
     now = datetime.now()
     today = now.strftime("%d.%m.%Y")
@@ -18,16 +23,19 @@ async def send_report():
 
     tasks = await filter_completed_tasks_by_date_range(yesterday, today)
     group: ReportGroup = await get_report_group()
-    for task in tasks:
+    async for task in tasks:
         file_report = io.BytesIO()
-        wb = await create_task_report(yesterday, today, tasks=[task])
+        wb = await create_task_report(yesterday, today, tasks=async_list([task]))
         wb.save(file_report)
         file_report.seek(0)
+
+        driver = await task.get_driver
+        car = await task.get_car
 
         await send_newsletter(
             driver_app.bot,
             group.tg_id_2,
-            f"{task.get_driver}\n{task.get_car}",
+            f"{driver}\n{car}",
             document=InputFile(file_report, filename=f"{now.strftime('%Y_%m_%d')}_.xlsx")
         )
 

@@ -19,7 +19,7 @@ async def task_report_by_date(request):
     return response
 
 
-async def create_task_report(start_date: str, end_date: str, is_complete: bool = None, tasks: list = None) -> Workbook:
+async def create_task_report(start_date: str, end_date: str, is_complete: bool = None, tasks=None) -> Workbook:
     # Create a new workbook and select the active worksheet
     wb = Workbook()
     ws = wb.active
