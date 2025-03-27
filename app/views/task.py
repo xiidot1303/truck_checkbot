@@ -10,7 +10,7 @@ async def task_report_by_date(request):
     start_date = "10.10.2020" if not start_date or start_date == 'None' else start_date
     end_date = "10.10.2100" if not end_date or end_date == 'None' else end_date
 
-    wb = await create_task_report(start_date, end_date, is_complete=True)
+    wb = await create_task_report(start_date, end_date)
 
     # Save the workbook to a response
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
