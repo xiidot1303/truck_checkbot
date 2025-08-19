@@ -51,8 +51,7 @@ async def driver_arrived_to_factory(update: Update, context: CustomContext):
         return
 
     # send message to factory man that driver is arriving
-    loop = asyncio.get_event_loop()
-    loop.create_task(
+    context.application.create_task(
         alert_factory_about_driver_arriving_notification(context.bot, task)
     )
     await query.answer()
@@ -71,8 +70,7 @@ async def factory_received_driver(update: Update, context: CustomContext):
     # create new taskevent about car waiting in factory
     await create_taskevent(task, 'in_factory')
     # send message to driver that factory received your car
-    loop = asyncio.get_event_loop()
-    loop.create_task(
+    context.application.create_task(
         alert_driver_about_car_in_factory_notification(context.bot, task)
     )
     await query.answer()
@@ -140,8 +138,7 @@ async def driver_arrived_to_depot(update: Update, context: CustomContext):
         return
 
     # send message to depot manager that driver is arriving to depot
-    loop = asyncio.get_event_loop()
-    loop.create_task(
+    context.application.create_task(
         alert_depot_manager_about_driver_arriving_notification(
             _depot_manager_app.bot, task, depot, taskevent
         )
@@ -187,8 +184,7 @@ async def driver_received_car_from_depot(update: Update, context: CustomContext)
         # generate excel report
         excel_file_path = await generate_excel_report_of_taks(task)
         # send report to group
-        loop = asyncio.get_event_loop()
-        loop.create_task(
+        context.application.create_task(
             send_report_of_task_newsletter(
                 context.bot,
                 task,
