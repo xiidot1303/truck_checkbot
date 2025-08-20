@@ -71,9 +71,11 @@ class TaskDepot(models.Model):
 
 EVENT_TYPES = [
     ('arrive_to_factory', 'Водитель прибыл на завод'),
+    ('placing_in_warehouse', 'Помещение автомобиля на ГП склад'),
     ('in_factory', 'На заводе'),
     ('arrive_to_depot', 'Водитель прибыл на склад'),
     ('in_depot', 'В складе'),
+    ('back_to_factory', 'Водитель вернулся на завод'),
 ]
 
 class TaskEvent(models.Model):

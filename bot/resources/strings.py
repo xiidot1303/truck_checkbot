@@ -141,13 +141,27 @@ lang_dict = {
 
     "destination": ["Yo'nalish", "Направление"],
 
-    "": ["", ""],
+    "arrive to warehouse": [
+        "Juda soz, endi siz tayor mahsulotlar omboriga borishingiz kerak.\n" \
+        "Omborxonaga yetib borgandan so'ng <code>Yetib keldim</code> tugmasini bosing.",
+        "Отлично, теперь вам нужно отправиться на склад готовой продукции.\n" \
+        "Как только вы достигнете склада, нажмите кнопку <code>Я прибыл</code>."
+        
+    ],
 
-    "": ["", ""],
+    "wait for the load": ["Yuk ortilishini kutib turing", "Дождитесь загрузки груза."],
 
-    "": ["", ""],
+    "back to factory": [
+        "Endilikda siz zavodga qaytishingiz kerak.\n" \
+        "Zavodga yetib borgandan so'ng <code>Yetib keldim</code> tugmasini bosing.",
+        "Теперь вам нужно вернуться на завод.\n" \
+        "Как только вы достигнете завода, нажмите кнопку <code>Я прибыл</code>."
+    ],
 
-    "": ["", ""],
+    "task completed successfully": [
+        "Topshiriq muvaffaqiyatli bajarildi! 🎉\n",
+        "Задание успешно выполнено! 🎉\n"
+    ],
 
     "": ["", ""],
 

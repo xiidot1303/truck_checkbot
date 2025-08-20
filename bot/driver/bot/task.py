@@ -50,20 +50,52 @@ async def driver_arrived_to_factory(update: Update, context: CustomContext):
         )
         return
 
+    # get taskevent about driver arriving to factory
+    taskevent: TaskEvent = await get_taskevent_by_task_and_event_type(task, 'arrive_to_factory')
+    # complete this taskevent
+    await complete_taskevent(taskevent)
+
+    # send message to driver that have to arrive to warehouse
+    markup = await arrived_keyboard(query, f'driver_arrived_to_warehouse-{task.id}')
+    await bot_send_message(
+        query,
+        context,
+        await get_word('arrive to warehouse', query),
+        reply_markup=markup
+    )
+
+    # create new taskevent about placing car in warehouse
+    await create_taskevent(task, 'placing_in_warehouse')
+
+    await query.answer()
+    await query.edit_message_reply_markup(reply_markup=None)
+
+
+async def driver_arrived_to_warehouse(update: Update, context: CustomContext):
+    query: CallbackQuery = update.callback_query
+    data = query.data
+    *args, task_id = data.split('-')
+    task: Task = await get_task_by_id(int(task_id))
+    # get driver by update
+    driver: Driver = await get_driver_by_update(query)
+
     # send message to factory man that driver is arriving
     context.application.create_task(
         alert_factory_about_driver_arriving_notification(context.bot, task)
     )
-    await query.answer()
+    await query.answer(
+        await get_word('wait for the load', query),
+    )
     await query.edit_message_reply_markup(reply_markup=None)
     
+
 async def factory_received_driver(update: Update, context: CustomContext):
     query: CallbackQuery = update.callback_query
     data = query.data
     *args, task_id = data.split('-')
     task: Task = await get_task_by_id(int(task_id))
     # get taskevent about driver arriving to factory
-    taskevent: TaskEvent = await get_taskevent_by_task_and_event_type(task, 'arrive_to_factory')
+    taskevent: TaskEvent = await get_taskevent_by_task_and_event_type(task, 'placing_in_warehouse')
     # complete this taskevent
     await complete_taskevent(taskevent)
 
@@ -75,6 +107,7 @@ async def factory_received_driver(update: Update, context: CustomContext):
     )
     await query.answer()
     await query.edit_message_reply_markup(reply_markup=None)
+
 
 async def driver_received_car_from_factory(update: Update, context: CustomContext):
     query: CallbackQuery = update.callback_query
@@ -146,6 +179,7 @@ async def driver_arrived_to_depot(update: Update, context: CustomContext):
     await query.answer()
     await query.edit_message_reply_markup(reply_markup=None)
 
+
 async def driver_received_car_from_depot(update: Update, context: CustomContext):
     @sync_to_async
     def get_task_of_taskevent(taskevent: TaskEvent) -> Task:
@@ -178,19 +212,65 @@ async def driver_received_car_from_depot(update: Update, context: CustomContext)
             reply_markup=markup
         )
     else:
-        # end task
-        task.is_complete = True
-        await task.asave()
-        # generate excel report
-        excel_file_path = await generate_excel_report_of_taks(task)
-        # send report to group
-        context.application.create_task(
-            send_report_of_task_newsletter(
-                context.bot,
-                task,
-                excel_file_path
-            )
+        # create taskevent about driver back to factory
+        taskevent: TaskEvent = await create_taskevent(task, 'back_to_factory')
+        # ask from driver about telling when back to factory
+        markup = await arrived_keyboard(query, f'driver_back_to_factory-{task.id}')
+        # send message to driver that have to back to factory
+        await bot_send_message(
+            query,
+            context,
+            await get_word('back to factory', query),
+            reply_markup=markup
         )
-        
+
     await query.answer()
     await query.edit_message_reply_markup(reply_markup=None)
+
+
+async def driver_back_to_factory(update: Update, context: CustomContext):
+    query: CallbackQuery = update.callback_query
+    data = query.data
+    *args, task_id = data.split('-')
+    task: Task = await get_task_by_id(int(task_id))
+    # get driver by update
+    driver: Driver = await get_driver_by_update(query)
+    # get factory
+    factory: Factory = await get_factory()
+    # check driver is arrived to factory
+    if await is_driver_arrived_to_address(driver.lat, driver.lon, factory.lat, factory.lon):
+        # continue
+        pass
+    else:
+        await query.answer(
+            text = await get_word('your location is wrong', query),
+            show_alert=True,
+        )
+        return
+
+    # get taskevent about driver arriving to factory
+    taskevent: TaskEvent = await get_taskevent_by_task_and_event_type(task, 'back_to_factory')
+    # complete this taskevent
+    await complete_taskevent(taskevent)
+
+    # end task
+    task.is_complete = True
+    await task.asave()
+    # generate excel report
+    excel_file_path = await generate_excel_report_of_taks(task)
+    # send report to group
+    context.application.create_task(
+        send_report_of_task_newsletter(
+            context.bot,
+            task,
+            excel_file_path
+        )
+    )
+    # send message to driver that task completed successfully
+    await query.answer()
+    await query.edit_message_reply_markup(reply_markup=None)
+    await bot_send_message(
+        query,
+        context,
+        await get_word('task completed successfully', query),
+    )

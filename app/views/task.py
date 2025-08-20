@@ -26,10 +26,17 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
 
     # Define column headers (based on your data)
     headers = [
-        ["Period", "Yo'nalish", "Mashina", "Haydovchi", "Mashina skladda bo'lishi", "", "", "Yuk ortilishi tugatilishi", "", "", "Manzilga yetib borish jarayoni", "", "", "Filialning yukni tushirish jarayoni", "", "", "Mashinaning zavodga qaytib kelishi", "", "", "Grafikdan jami kechikish"],
-        ["", "", "", "", "Grafik", "Fact", "Farq", "Grafik", "Fact", "Farq",
-        "Grafik", "Fact", "Farq", "Grafik", "Fact", "Farq", "Grafik", "Fact", "Farq", ""]
-        ]
+        ["Period", "Yo'nalish", "Mashina", "Haydovchi", "Mashina zavodga kelishi", "", "",
+         "Avtomobilning tayyor mahsulotlar omboriga qo'yish", "", "",
+         "Yuk ortilish jarayoni", "", "", "Manzilga yetib borish jarayoni", "", "", 
+         "Filialning yukni tushirish jarayoni", "", "", "Mashinaning zavodga qaytib kelishi", "", "", 
+         "Grafikdan jami kechikish"
+        ],
+        ["", "", "", "", "Grafik", "Fact", "Farq", "Grafik", "Fact", "Farq", 
+         "Grafik", "Fact", "Farq", "Grafik", "Fact", "Farq", 
+         "Grafik", "Fact", "Farq", 
+         "Grafik", "Fact", "Farq", ""]
+    ]
 
     # Add the headers to the worksheet
     for header in headers:
@@ -62,8 +69,16 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
                     difference
                 ]
                 row_data += data
-            # add empty values in fields "Mashinaning zavodga qaytib kelishi"
-            row_data += ["", "", ""]
+            # add empty cells for missing events 
+            # check placing_in_warehouse event is present
+            if not await task.events.filter(event_type='placing_in_warehouse').aexists():
+                row_data.insert(7, "")
+                row_data.insert(8, "")
+                row_data.insert(9, "")
+            # check back_to_factory event is present
+            if not await task.events.filter(event_type='back_to_factory').aexists():
+                row_data += ["", "", ""]
+
             row_data += [str(round(total_differences, 2))]
             ws.append(row_data)
 
@@ -76,7 +91,8 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
         cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # Set column widths for better readability
-    column_widths = [12, 12, 12, 20, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 25]
+    column_widths = [12, 12, 12, 20, 11, 11, 11, 11, 11, 11, 11, 11, 11, 
+                     11, 11, 11, 11, 11, 11, 12, 12, 12, 25]
     for i, width in enumerate(column_widths, start=1):
         ws.column_dimensions[get_column_letter(i)].width = width
 
@@ -86,12 +102,13 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
     ws.merge_cells(start_row=1, start_column=11, end_row=1, end_column=13)
     ws.merge_cells(start_row=1, start_column=14, end_row=1, end_column=16)
     ws.merge_cells(start_row=1, start_column=17, end_row=1, end_column=19)
+    ws.merge_cells(start_row=1, start_column=20, end_row=1, end_column=22)
 
     ws.merge_cells(start_row=1, start_column=1, end_row=2, end_column=1)
     ws.merge_cells(start_row=1, start_column=2, end_row=2, end_column=2)
     ws.merge_cells(start_row=1, start_column=3, end_row=2, end_column=3)
     ws.merge_cells(start_row=1, start_column=4, end_row=2, end_column=4)
-    ws.merge_cells(start_row=1, start_column=20, end_row=2, end_column=20)
+    ws.merge_cells(start_row=1, start_column=23, end_row=2, end_column=23)
 
     # Define border style
     border_style = Border(
@@ -117,7 +134,9 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
             ws.cell(row=row, column=col).fill = PatternFill(start_color="f4ffda", end_color="f4ffda", fill_type="solid")
         for col in range(17, 20):  # Columns Q, R, S
             ws.cell(row=row, column=col).fill = PatternFill(start_color="e5d6ff", end_color="e5d6ff", fill_type="solid")
-        for col in range(20, 21):  # Columns T
+        for col in range(20, 23):  # Columns T, V, V
+            ws.cell(row=row, column=col).fill = PatternFill(start_color="e2f0d9", end_color="e2f0d9", fill_type="solid")
+        for col in range(23, 24):  # Columns W
             ws.cell(row=row, column=col).fill = PatternFill(start_color="fffbe5", end_color="fffbe5", fill_type="solid")
 
     return wb
