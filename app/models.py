@@ -162,6 +162,10 @@ class TaskSchedule(models.Model):
     arrive_to_depot_time_add_day = models.IntegerField(null=True, blank=False, default=0, verbose_name='+ день')
     in_depot_time = models.TimeField(null=True, blank=False, verbose_name = 'Время окончания разгрузки')
     in_depot_time_add_day = models.IntegerField(null=True, blank=False, default=0, verbose_name='+ день')
+    placing_in_warehouse_time = models.TimeField(null=True, blank=False, verbose_name='Время помещения на склад')
+    placing_in_warehouse_time_add_day = models.IntegerField(null=True, blank=False, default=0, verbose_name='+ день')
+    back_to_factory_time = models.TimeField(null=True, blank=False, verbose_name='Время возвращения на завод')
+    back_to_factory_time_add_day = models.IntegerField(null=True, blank=False, default=0, verbose_name='+ день')
     weekday = models.IntegerField(null=True, blank=False, choices=WEEKDAY_CHOICES, verbose_name='Будний день')
 
     class Meta:
