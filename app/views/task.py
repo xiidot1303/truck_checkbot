@@ -3,6 +3,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
 from app.services.task_service import *
+from django.db.models import Sum
 
 async def task_report_by_date(request):
     start_date = request.GET.get('created_at__range__gte')
@@ -30,12 +31,13 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
          "Avtomobilning tayyor mahsulotlar omboriga qo'yish", "", "",
          "Yuk ortilish jarayoni", "", "", "Manzilga yetib borish jarayoni", "", "", 
          "Filialning yukni tushirish jarayoni", "", "", "Mashinaning zavodga qaytib kelishi", "", "", 
-         "Grafikdan jami kechikish"
+         "Fors-major", "", "", "Grafikdan jami kechikish"
         ],
         ["", "", "", "", "Grafik", "Fact", "Farq", "Grafik", "Fact", "Farq", 
          "Grafik", "Fact", "Farq", "Grafik", "Fact", "Farq", 
          "Grafik", "Fact", "Farq", 
-         "Grafik", "Fact", "Farq", ""]
+         "Grafik", "Fact", "Farq", 
+         "Remont", "Avariya", "Zapravka", ""]
     ]
 
     # Add the headers to the worksheet
@@ -78,21 +80,32 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
             # check back_to_factory event is present
             if not await task.events.filter(event_type='back_to_factory').aexists():
                 row_data += ["", "", ""]
-
-            row_data += [str(round(total_differences, 2))]
+            # set force majeures of the task
+            qs = await sync_to_async(list)(
+                task.forcemajeures.filter(spend_time__isnull=False)
+                .values('type')
+                .annotate(total_spend=Sum('spend_time'))
+            )
+            force_majeures_by_type = {item['type']: item['total_spend'] or 0 for item in qs}
+            row_data += [force_majeures_by_type.get('repair', 0)]
+            row_data += [force_majeures_by_type.get('accident', 0)]
+            row_data += [force_majeures_by_type.get('refueling', 0)]
+            total_force_majeure_time = sum(force_majeures_by_type.values())
+            total_differences = round(total_differences - total_force_majeure_time, 2)
+            row_data += [str(total_differences)]
             ws.append(row_data)
 
         last_period = task.created_at.date()
     # Style the headers
     header_font = Font(bold=True)
-    for col in range(1, 21):
+    for col in range(1, 27):
         cell = ws.cell(row=1, column=col)
         cell.font = header_font
         cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # Set column widths for better readability
     column_widths = [12, 12, 12, 20, 11, 11, 11, 11, 11, 11, 11, 11, 11, 
-                     11, 11, 11, 11, 11, 11, 12, 12, 12, 25]
+                     11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 25]
     for i, width in enumerate(column_widths, start=1):
         ws.column_dimensions[get_column_letter(i)].width = width
 
@@ -103,12 +116,13 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
     ws.merge_cells(start_row=1, start_column=14, end_row=1, end_column=16)
     ws.merge_cells(start_row=1, start_column=17, end_row=1, end_column=19)
     ws.merge_cells(start_row=1, start_column=20, end_row=1, end_column=22)
+    ws.merge_cells(start_row=1, start_column=23, end_row=1, end_column=25)
 
     ws.merge_cells(start_row=1, start_column=1, end_row=2, end_column=1)
     ws.merge_cells(start_row=1, start_column=2, end_row=2, end_column=2)
     ws.merge_cells(start_row=1, start_column=3, end_row=2, end_column=3)
     ws.merge_cells(start_row=1, start_column=4, end_row=2, end_column=4)
-    ws.merge_cells(start_row=1, start_column=23, end_row=2, end_column=23)
+    ws.merge_cells(start_row=1, start_column=26, end_row=2, end_column=26)
 
     # Define border style
     border_style = Border(
@@ -136,7 +150,9 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
             ws.cell(row=row, column=col).fill = PatternFill(start_color="e5d6ff", end_color="e5d6ff", fill_type="solid")
         for col in range(20, 23):  # Columns T, V, V
             ws.cell(row=row, column=col).fill = PatternFill(start_color="e2f0d9", end_color="e2f0d9", fill_type="solid")
-        for col in range(23, 24):  # Columns W
+        for col in range(23, 26):  # Columns W, X, Y
+            ws.cell(row=row, column=col).fill = PatternFill(start_color="dae3f4", end_color="dae3f4", fill_type="solid")
+        for col in range(26, 27):  # Columns Z
             ws.cell(row=row, column=col).fill = PatternFill(start_color="fffbe5", end_color="fffbe5", fill_type="solid")
 
     return wb
