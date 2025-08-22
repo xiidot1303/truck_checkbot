@@ -1,5 +1,5 @@
 from app.services import *
-from app.models import Task, TaskEvent, Depot, TaskDepot, EvenDurationNorm, TaskSchedule
+from app.models import *
 from django.utils.timezone import now
 import pandas as pd
 import os
@@ -57,6 +57,30 @@ async def complete_taskevent(taskevent: TaskEvent):
 
     await taskevent.asave()
     return
+
+
+async def create_force_majeure(task: Task, type) -> ForceMajeure:
+    start_time = await datetime_now()
+    obj = await ForceMajeure.objects.acreate(
+        task = task, type = type, start_time = start_time
+    )
+    return obj
+
+
+async def get_force_majeure_by_id(id) -> ForceMajeure:
+    obj = await ForceMajeure.objects.aget(id=id)
+    return obj
+
+
+async def complete_force_majeure(force_majeure: ForceMajeure):
+    end_time = await datetime_now()
+    force_majeure.end_time = end_time
+    delta = force_majeure.end_time - force_majeure.start_time
+    minute = round(delta.seconds / 60, 2)
+    force_majeure.spend_time = minute
+    await force_majeure.asave()
+    return
+
 
 async def get_taskdepot_by_task_and_depot(task: Task, depot: Depot) -> TaskDepot:
     obj = await TaskDepot.objects.aget(task = task, depot = depot)

@@ -67,3 +67,11 @@ async def drivers_next_address_string(user_id, address):
         f"<i>{address}</i>\n\n" \
             f"{await get_word_driver('click button after arrive to depot', chat_id=user_id)}"
     return text
+
+async def force_majeure_string_for_controller(task: Task, force_majeure_type: str):
+    text = str(lang_dict['force majeure details'][1]).format(
+        type = lang_dict[force_majeure_type][1],
+        car = await task.get_car,
+        driver = await task.get_driver
+    )
+    return text

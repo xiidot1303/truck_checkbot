@@ -32,10 +32,14 @@ from telegram import (
 
 #     return buttons
 
-async def arrived_keyboard(update, callback_data) -> InlineKeyboardMarkup:
+async def arrived_keyboard(update, callback_data, task_id) -> InlineKeyboardMarkup:
     i_arrived = InlineKeyboardButton(
         await get_word_driver('arrived', update),
         callback_data=callback_data
     )
-    markup = InlineKeyboardMarkup([[i_arrived]])
+    i_force_majeure = InlineKeyboardButton(
+        await get_word_driver('force majeure', update),
+        callback_data=f'force_majeure-{task_id}'
+    )
+    markup = InlineKeyboardMarkup([[i_arrived], [i_force_majeure]])
     return markup

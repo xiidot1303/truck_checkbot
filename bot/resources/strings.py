@@ -163,27 +163,48 @@ lang_dict = {
         "Задание успешно выполнено! 🎉\n"
     ],
 
-    "": ["", ""],
+    "force majeure": [
+        "Fors-major", 
+        "Форс-мажор"
+    ],
 
-    "": ["", ""],
+    "repair": ["Remont", "Ремонт"],
 
-    "": ["", ""],
+    "accident": ["Avtohalokat", "Авария"],
 
-    "": ["", ""],
+    "refueling": ["Yoqilg'i quyish", "Заправка"],
 
-    "": ["", ""],
+    "select force majeure type": [
+        "Sizda qanday fors-major holati yuz berdi?\n" \
+        "Iltimos, quyidagi variantlardan birini tanlang.",
+        "Какой форс-мажор у вас произошел?\n" \
+        "Пожалуйста, выберите один из следующих вариантов."
+    ],
 
-    "": ["", ""],
+    "wait response of the controller": [
+        "Nazoratchi javobini kuting...",
+        "Ожидайте ответа контроллера..."
+    ], 
 
-    "": ["", ""],
+    "force majeure details": [
+        "❕ Fors major holati yuz berdi!\n({type})\n\n" \
+            "🚚 Mashina: {car} \n" \
+            "👤 Hayrovchi: {driver}\n",
+        "❕ Произошел форс-мажор!\n({type})\n\n" \
+            "🚚 Автомобиль: {car} \n" \
+            "👤 Водитель: {driver}\n"
+    ],
 
-    "": ["", ""],
+    "confirm": ["✅ Tasdiqlash", "✅ Подтвердить"],
 
-    "": ["", ""],
+    "force majeure confirmed": ["Tasdiqlandi", "Подтверждено"],
 
-    "": ["", ""],
+    "your force majeure is confirmed": [
+        "Sizning so'rovingiz qabul qilindi.\nFors-major holat yakunlangandan so'ng, <code>Yakunlandi</code> tugmasini bosing.",
+        "Ваш запрос принят.\nПосле завершения форс-мажора нажмите кнопку <code>Завершено</code>." 
+    ],
 
-    "": ["", ""],
+    "completed": ["Yakunlandi", "Завершено"],
 
     "": ["", ""],
 

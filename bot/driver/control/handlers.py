@@ -9,7 +9,7 @@ from telegram.ext import (
 )
 
 from bot.driver.bot import (
-    main, login, task, location
+    main, login, task, location, force_majeure
 )
 
 start = CommandHandler('start', main.start)
@@ -46,6 +46,23 @@ driver_back_to_factory_handler = CallbackQueryHandler(
 
 update_driver_location_handler = MessageHandler(filters.LOCATION, location.update_driver_location)
 
+force_majeure_detected_handler = CallbackQueryHandler(
+    force_majeure.force_majeure_detected,
+    pattern=r"^force_majeure-"
+)
+force_majeure_selected_handler = CallbackQueryHandler(
+    force_majeure.force_majeure_type_selected,
+    pattern=r"^force_majeure_type"
+)
+controller_confirm_force_majeure_handler = CallbackQueryHandler(
+    force_majeure.controller_confirm_force_majeure,
+    pattern=r"^confirm_force_majeure"
+)
+driver_completed_force_majeure_handler = CallbackQueryHandler(
+    force_majeure.driver_complete_force_majeure,
+    pattern=r"^driver_completed_force_majeure"
+)
+
 handlers = [
     start,
     get_lang,
@@ -57,6 +74,12 @@ handlers = [
     driver_arrived_to_depot_handler,
     driver_received_car_from_depot_handler,
     driver_back_to_factory_handler,
+
+    force_majeure_detected_handler,
+    force_majeure_selected_handler,
+    controller_confirm_force_majeure_handler,
+    driver_completed_force_majeure_handler,
+
 
     update_driver_location_handler,
     

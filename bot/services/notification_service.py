@@ -75,3 +75,27 @@ async def send_report_of_task_newsletter(bot: Bot, task: Task, file_path):
         f"{task.car}",
         document=file_path
         )
+    
+async def alert_controller_about_force_majeure_notification(bot: Bot, task: Task, force_majeure_type: str):
+    factory: Factory = await get_factory()
+    user_id = factory.tg_id
+    text = await force_majeure_string_for_controller(task, force_majeure_type)
+    i_confirm = InlineKeyboardButton(
+        text=lang_dict['confirm'][1],
+        callback_data=f'confirm_force_majeure-{task.id}-{force_majeure_type}'
+        )
+    markup = InlineKeyboardMarkup([[i_confirm]])
+    await send_newsletter(bot, user_id, text, reply_markup=markup)
+
+
+async def alert_driver_about_confirmed_force_majeure_notification(bot: Bot, force_majeure: ForceMajeure):
+    task: Task = await force_majeure.get_task
+    driver: Driver = await driver_of_task(task)
+    user_id = driver.user_id
+    text = await get_word_driver('your force majeure is confirmed', chat_id=user_id)
+    i_button = InlineKeyboardButton(
+        text=await get_word_driver('completed', chat_id=user_id),
+        callback_data=f'driver_completed_force_majeure-{force_majeure.id}'
+        )
+    markup = InlineKeyboardMarkup([[i_button]])
+    await send_newsletter(bot, user_id, text, reply_markup=markup)

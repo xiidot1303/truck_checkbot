@@ -34,12 +34,20 @@ class TaskEventInline(admin.TabularInline):
 
     spend_time.short_description = "Пройденное время (Минуты)"
 
+
+class ForceMajeureInline(admin.TabularInline):
+    model = ForceMajeure
+    extra = 0
+    fields = ['type', 'start_time', 'end_time', 'spend_time']
+    readonly_fields = ['type', 'start_time', 'end_time', 'spend_time']
+
+
 class TaskAdmin(admin.ModelAdmin):
     change_list_template = 'admin/task/task_change_list.html'
     list_display = ['driver', 'depot', 'car', 'created_at', 'is_complete']
     list_filter = ['driver', 'car', ('created_at', DateRangeFilter)]
     # search_fields = ['driver', 'car']
-    inlines = [TaskDepotInline, TaskEventInline]
+    inlines = [TaskDepotInline, TaskEventInline, ForceMajeureInline]
 
     def depot(self, obj):
         t = ""

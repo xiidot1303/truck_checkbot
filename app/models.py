@@ -172,3 +172,26 @@ class TaskSchedule(models.Model):
         verbose_name = 'График водителей'
         verbose_name_plural = 'Графики водителей'
         unique_together = ("depot", "weekday")
+
+
+FORCE_MAJEURE_TYPES = [
+    ('repair', 'Ремонт'),
+    ('accident', 'Авария'),
+    ('refueling', 'Заправка'),
+]
+
+class ForceMajeure(models.Model):
+    task = models.ForeignKey(Task, related_name='forcemajeures', on_delete=models.CASCADE, verbose_name="Задание")
+    type = models.CharField(max_length=50, choices=FORCE_MAJEURE_TYPES, verbose_name="Тип")
+    start_time = models.DateTimeField(null=True, blank=True, verbose_name="Время начала") 
+    end_time = models.DateTimeField(null=True, blank=True, verbose_name="Конечное время")
+    spend_time = models.FloatField(null=True, blank=True, verbose_name="Проведенное время (Минуты)")
+
+    class Meta:
+        verbose_name = "Форс-мажор"
+        verbose_name_plural = "Форс-мажоры"
+
+    @property
+    @sync_to_async
+    def get_task(self):
+        return self.task
