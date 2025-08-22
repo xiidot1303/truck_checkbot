@@ -68,7 +68,7 @@ class EvenDurationNormAdmin(admin.ModelAdmin):
 class TaskScheduleAdmin(admin.ModelAdmin):
     list_display = [
         'depot', 'arrive_to_factory_time', 'in_factory_time', 
-        'arrive_to_depot_time', 'in_depot_time', 'weekday'
+        'arrive_to_depot_time', 'in_depot_time', 'placing_in_warehouse_time', 'back_to_factory_time', 'weekday'
         ]
     list_filter = ['depot', 'weekday']
 
@@ -78,8 +78,10 @@ class TaskScheduleAdmin(admin.ModelAdmin):
                 ('depot'),
                 ('arrive_to_factory_time', 'arrive_to_factory_time_add_day'), 
                 ('in_factory_time', 'in_factory_time_add_day'),
+                ('placing_in_warehouse_time', 'placing_in_warehouse_time_add_day'),
                 ('arrive_to_depot_time', 'arrive_to_depot_time_add_day'),
                 ('in_depot_time', 'in_depot_time_add_day'),
+                ('back_to_factory_time', 'back_to_factory_time_add_day'),
                 ('weekday'),
                 )
         }),
