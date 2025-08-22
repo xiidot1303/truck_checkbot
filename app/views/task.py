@@ -87,9 +87,9 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
                 .annotate(total_spend=Sum('spend_time'))
             )
             force_majeures_by_type = {item['type']: item['total_spend'] or 0 for item in qs}
-            row_data += [force_majeures_by_type.get('repair', 0)]
-            row_data += [force_majeures_by_type.get('accident', 0)]
-            row_data += [force_majeures_by_type.get('refueling', 0)]
+            row_data += [force_majeures_by_type.get('repair', 0) or ""]
+            row_data += [force_majeures_by_type.get('accident', 0) or ""]
+            row_data += [force_majeures_by_type.get('refueling', 0) or ""]
             total_force_majeure_time = sum(force_majeures_by_type.values())
             total_differences = round(total_differences - total_force_majeure_time, 2)
             row_data += [str(total_differences)]
