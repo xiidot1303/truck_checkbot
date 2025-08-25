@@ -176,7 +176,7 @@ class TaskSchedule(models.Model):
 
 FORCE_MAJEURE_TYPES = [
     ('repair', 'Ремонт'),
-    ('accident', 'Авария'),
+    ('accident', 'Пробка'),
     ('refueling', 'Заправка'),
 ]
 

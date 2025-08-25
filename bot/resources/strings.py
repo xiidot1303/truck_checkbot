@@ -170,7 +170,7 @@ lang_dict = {
 
     "repair": ["Remont", "Ремонт"],
 
-    "accident": ["Avtohalokat", "Авария"],
+    "accident": ["Tirbandlik", "Пробка"],
 
     "refueling": ["Yoqilg'i quyish", "Заправка"],
 
