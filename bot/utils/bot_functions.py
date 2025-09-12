@@ -24,6 +24,9 @@ from telegram.ext import (
 )
 from uuid import uuid4
 from config import DRIVERBOT_API_TOKEN, DEPOT_MANAGERBOT_API_TOKEN
+import logging
+
+logger = logging.getLogger(__name__)
 
 driver_app = Application.builder().token(DRIVERBOT_API_TOKEN).updater(None).build()
 depot_manager_app = Application.builder().token(DEPOT_MANAGERBOT_API_TOKEN).updater(None).build()
@@ -102,9 +105,9 @@ async def send_newsletter(bot: Bot, chat_id, text, photo=None, video=None, docum
         if pin_message:
             await bot.pin_chat_message(chat_id=chat_id, message_id=message.message_id)
         return message
-    except Exception as ex:
-        print(ex)
-        return ex
+    except Exception as e:
+        logger.exception("Failed to send newsletter")
+        return e
 
 async def bot_delete_message(update: Update, context: ContextTypes.DEFAULT_TYPE, message_id=None):
     if not message_id:
