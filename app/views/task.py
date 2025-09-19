@@ -27,9 +27,9 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
 
     # Define column headers (based on your data)
     headers = [
-        ["Period", "Yo'nalish", "Mashina", "Haydovchi", "Mashina zavodga kelishi", "", "",
+        ["Period", "Yo'nalish", "Mashina", "Haydovchi", "Haydovchi zavodga kelishi", "", "",
          "Avtomobilning tayyor mahsulotlar omboriga qo'yish", "", "",
-         "Yuk ortilish jarayoni", "", "", "Manzilga yetib borish jarayoni", "", "", 
+         "Yuk ortilish jarayoni", "", "", "Manzilga yetib borgan vaqti", "", "", 
          "Filialning yukni tushirish jarayoni", "", "", "Mashinaning zavodga qaytib kelishi", "", "", 
          "Fors-major", "", "", "Grafikdan jami kechikish"
         ],
