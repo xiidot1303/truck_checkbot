@@ -3,6 +3,6 @@ from bot.views import botwebhook
 from config import DRIVERBOT_API_TOKEN, DEPOT_MANAGERBOT_API_TOKEN
 
 urlpatterns = [
-    path(DRIVERBOT_API_TOKEN, botwebhook.DriverBotWebhookView.as_view()),
-    path(DEPOT_MANAGERBOT_API_TOKEN, botwebhook.DepotManagerBotWebhookView.as_view())
+    path('webhook/driver', botwebhook.DriverBotWebhookView.as_view()),
+    path('webhook/depot-manager', botwebhook.DepotManagerBotWebhookView.as_view())
 ]
