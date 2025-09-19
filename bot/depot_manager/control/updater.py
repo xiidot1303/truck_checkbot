@@ -41,7 +41,7 @@ for handler in handlers[::-1]:
 ### webhook functions
 async def set_webhook():
     await application.bot.set_webhook(
-            url=f"{WEBHOOK_URL}/webhook/depot-manager", 
+            url=f"{WEBHOOK_URL}/webhook-depot-manager", 
             allowed_updates=Update.ALL_TYPES,
             drop_pending_updates=True
             )
