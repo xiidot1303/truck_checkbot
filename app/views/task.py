@@ -29,14 +29,15 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
     headers = [
         ["Period", "Yo'nalish", "Mashina", "Haydovchi", "Haydovchi zavodga kelishi", "", "",
          "Avtomobilning tayyor mahsulotlar omboriga qo'yish", "", "",
-         "Yuk ortilish jarayoni", "", "", "Manzilga yetib borgan vaqti", "", "", 
-         "Filialning yukni tushirish jarayoni", "", "", "Mashinaning zavodga qaytib kelishi", "", "", 
+         "Yuk ortilishi boshlanishi", "", "", "Yuk ortilishi tugatilishi", "", "", "Manzilga yetib borgan vaqti", "", "", 
+         "Filialning yuk tushirish boshlanishi", "", "", "Filialning yuk tushirish tugatilishi", "", "",
+         "Mashinaning zavodga qaytib kelishi", "", "", 
          "Fors-major", "", "", "Grafikdan jami kechikish"
         ],
         ["", "", "", "", "Grafik", "Fact", "Farq", "Grafik", "Fact", "Farq", 
          "Grafik", "Fact", "Farq", "Grafik", "Fact", "Farq", 
-         "Grafik", "Fact", "Farq", 
-         "Grafik", "Fact", "Farq", 
+         "Grafik", "Fact", "Farq", "Grafik", "Fact", "Farq", 
+         "Grafik", "Fact", "Farq", "Grafik", "Fact", "Farq", 
          "Remont", "Avariya", "Zapravka", ""]
     ]
 
@@ -65,11 +66,23 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
                 difference = await event.difference_with_schedule
                 if difference < 0:
                     total_differences += difference
-                data = [
-                    event.schedule_datetime.strftime("%H:%M") if event.schedule_datetime else "",
-                    event.end_time.strftime('%H:%M') if event.end_time else "",
-                    difference
-                ]
+                if event.event_type in ['placing_in_warehouse', 'in_depot']:
+                    # insert double data start and end times
+                    data = [
+                        "",
+                        event.start_time.strftime('%H:%M') if event.start_time else "",
+                        "",
+
+                        event.schedule_datetime.strftime("%H:%M") if event.schedule_datetime else "",
+                        event.end_time.strftime('%H:%M') if event.end_time else "",
+                        difference
+                    ]
+                else:
+                    data = [
+                        event.schedule_datetime.strftime("%H:%M") if event.schedule_datetime else "",
+                        event.end_time.strftime('%H:%M') if event.end_time else "",
+                        difference
+                    ]
                 row_data += data
             # add empty cells for missing events 
             # check placing_in_warehouse event is present
@@ -104,7 +117,7 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
         cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # Set column widths for better readability
-    column_widths = [12, 12, 12, 20, 11, 11, 11, 11, 11, 11, 11, 11, 11, 
+    column_widths = [12, 12, 12, 20, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 
                      11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 25]
     for i, width in enumerate(column_widths, start=1):
         ws.column_dimensions[get_column_letter(i)].width = width
@@ -117,12 +130,13 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
     ws.merge_cells(start_row=1, start_column=17, end_row=1, end_column=19)
     ws.merge_cells(start_row=1, start_column=20, end_row=1, end_column=22)
     ws.merge_cells(start_row=1, start_column=23, end_row=1, end_column=25)
+    ws.merge_cells(start_row=1, start_column=26, end_row=1, end_column=28)
 
     ws.merge_cells(start_row=1, start_column=1, end_row=2, end_column=1)
     ws.merge_cells(start_row=1, start_column=2, end_row=2, end_column=2)
     ws.merge_cells(start_row=1, start_column=3, end_row=2, end_column=3)
     ws.merge_cells(start_row=1, start_column=4, end_row=2, end_column=4)
-    ws.merge_cells(start_row=1, start_column=26, end_row=2, end_column=26)
+    ws.merge_cells(start_row=1, start_column=29, end_row=2, end_column=29)
 
     # Define border style
     border_style = Border(
@@ -140,19 +154,19 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
     for row in range(1, ws.max_row + 1):
         for col in range(5, 8):  # Columns E, F, G
             ws.cell(row=row, column=col).fill = PatternFill(start_color="e2f0d9", end_color="e2f0d9", fill_type="solid")
-        for col in range(8, 11):  # Columns G, H, J
+        for col in range(8, 11):  # Columns H, I, J
             ws.cell(row=row, column=col).fill = PatternFill(start_color="dae3f4", end_color="dae3f4", fill_type="solid")
-        for col in range(11, 14):  # Columns K, L, M
+        for col in range(11, 17):  # Columns K, L, M, N, O, P
             ws.cell(row=row, column=col).fill = PatternFill(start_color="ffdae3", end_color="ffdae3", fill_type="solid")
-        for col in range(14, 17):  # Columns N, O, P
-            ws.cell(row=row, column=col).fill = PatternFill(start_color="f4ffda", end_color="f4ffda", fill_type="solid")
         for col in range(17, 20):  # Columns Q, R, S
+            ws.cell(row=row, column=col).fill = PatternFill(start_color="f4ffda", end_color="f4ffda", fill_type="solid")
+        for col in range(20, 26):  # Columns T, U, V, W, X, Y
             ws.cell(row=row, column=col).fill = PatternFill(start_color="e5d6ff", end_color="e5d6ff", fill_type="solid")
-        for col in range(20, 23):  # Columns T, V, V
+        for col in range(26, 29):  # Columns Z, AA, AB
             ws.cell(row=row, column=col).fill = PatternFill(start_color="e2f0d9", end_color="e2f0d9", fill_type="solid")
-        for col in range(23, 26):  # Columns W, X, Y
+        for col in range(29, 32):  # Columns AC, AD, AE
             ws.cell(row=row, column=col).fill = PatternFill(start_color="dae3f4", end_color="dae3f4", fill_type="solid")
-        for col in range(26, 27):  # Columns Z
+        for col in range(32, 33):  # Columns AF
             ws.cell(row=row, column=col).fill = PatternFill(start_color="fffbe5", end_color="fffbe5", fill_type="solid")
 
     return wb
