@@ -111,7 +111,7 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
         last_period = task.created_at.date()
     # Style the headers
     header_font = Font(bold=True)
-    for col in range(1, 27):
+    for col in range(1, 33):
         cell = ws.cell(row=1, column=col)
         cell.font = header_font
         cell.alignment = Alignment(horizontal="center", vertical="center")
@@ -131,12 +131,13 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
     ws.merge_cells(start_row=1, start_column=20, end_row=1, end_column=22)
     ws.merge_cells(start_row=1, start_column=23, end_row=1, end_column=25)
     ws.merge_cells(start_row=1, start_column=26, end_row=1, end_column=28)
+    ws.merge_cells(start_row=1, start_column=29, end_row=1, end_column=31)
 
     ws.merge_cells(start_row=1, start_column=1, end_row=2, end_column=1)
     ws.merge_cells(start_row=1, start_column=2, end_row=2, end_column=2)
     ws.merge_cells(start_row=1, start_column=3, end_row=2, end_column=3)
     ws.merge_cells(start_row=1, start_column=4, end_row=2, end_column=4)
-    ws.merge_cells(start_row=1, start_column=29, end_row=2, end_column=29)
+    ws.merge_cells(start_row=1, start_column=32, end_row=2, end_column=32)
 
     # Define border style
     border_style = Border(
