@@ -66,7 +66,7 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
                 difference = await event.difference_with_schedule
                 if difference < 0:
                     total_differences += difference
-                if event.event_type in ['placing_in_warehouse', 'in_depot']:
+                if event.event_type in ['in_factory', 'in_depot']:
                     # insert double data start and end times
                     data = [
                         "",
