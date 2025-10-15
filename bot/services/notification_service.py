@@ -61,11 +61,13 @@ async def alert_driver_about_car_in_depot_notification(bot: Bot, task: Task, tas
             )
         markup = InlineKeyboardMarkup([[i_get]])
         await bot.send_message(user_id, text, reply_markup=markup, parse_mode=ParseMode.HTML)
+        return 'success'
     except Exception as e:
         await bot.send_message(
             chat_id="206261493",
             text=f"Error in alert_driver_about_car_in_depot_notification: {str(e)}"
         )
+        return 'error'
 
 async def send_report_of_task_newsletter(bot: Bot, task: Task, file_path):
     report_group: ReportGroup = await get_report_group()

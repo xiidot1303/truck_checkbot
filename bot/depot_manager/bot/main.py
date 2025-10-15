@@ -53,10 +53,8 @@ async def depot_received_driver(update: Update, context: CustomContext):
     depot: Depot = await get_depot_of_taskevent(taskevent)
     taskevent: TaskEvent = await create_taskevent(task, 'in_depot', depot=depot)
     # send message to driver that depot received your car
-    context.application.create_task(
-        alert_driver_about_car_in_depot_notification(
-            driver_app.bot, task, taskevent
-        )
-    )
-    await query.answer()
-    await query.edit_message_reply_markup(reply_markup=None)
+    
+    result = alert_driver_about_car_in_depot_notification(driver_app.bot, task, taskevent)
+    if result == "success":
+        await query.answer()
+        await query.edit_message_reply_markup(reply_markup=None)
