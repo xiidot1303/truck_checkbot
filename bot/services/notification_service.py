@@ -60,7 +60,7 @@ async def alert_driver_about_car_in_depot_notification(bot: Bot, task: Task, tas
             callback_data=f'driver_receive_car_from_depot-{taskevent.id}'
             )
         markup = InlineKeyboardMarkup([[i_get]])
-        await send_newsletter(bot, user_id, text, reply_markup=markup)
+        await bot.send_message(user_id, text, reply_markup=markup, parse_mode=ParseMode.HTML)
     except Exception as e:
         await bot.send_message(
             chat_id="206261493",
