@@ -39,7 +39,7 @@ class Message(models.Model):
         verbose_name_plural = "Сообщения"
 
 class Driver(models.Model):
-    user_id = models.BigIntegerField(null=True)
+    user_id = models.BigIntegerField(null=True, unique=True)
     name = models.CharField(null=True, blank=True, max_length=256, default='', verbose_name='Имя')
     username = models.CharField(null=True, blank=True, max_length=256, verbose_name='username')
     firstname = models.CharField(null=True, blank=True, max_length=256, verbose_name='Никнейм')
