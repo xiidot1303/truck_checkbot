@@ -85,8 +85,8 @@ class TaskScheduleAdmin(admin.ModelAdmin):
             'fields': (
                 ('depot'),
                 ('arrive_to_factory_time', 'arrive_to_factory_time_add_day'), 
-                ('in_factory_time', 'in_factory_time_add_day'),
                 ('placing_in_warehouse_time', 'placing_in_warehouse_time_add_day'),
+                ('in_factory_time', 'in_factory_time_add_day'),
                 ('arrive_to_depot_time', 'arrive_to_depot_time_add_day'),
                 ('in_depot_time', 'in_depot_time_add_day'),
                 ('back_to_factory_time', 'back_to_factory_time_add_day'),
