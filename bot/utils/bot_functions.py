@@ -31,6 +31,13 @@ logger = logging.getLogger(__name__)
 driver_app = Application.builder().token(DRIVERBOT_API_TOKEN).updater(None).build()
 depot_manager_app = Application.builder().token(DEPOT_MANAGERBOT_API_TOKEN).updater(None).build()
 
+async def get_driver_bot():
+    return Bot(token=DRIVERBOT_API_TOKEN)
+
+async def get_depot_manager_bot():
+    return Bot(token=DEPOT_MANAGERBOT_API_TOKEN)
+
+
 async def update_message_reply_text(update: Update, text, reply_markup=None, disable_web_page_preview = True):
     message = await update.message.reply_text(
         text,

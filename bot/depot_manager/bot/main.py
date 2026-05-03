@@ -6,6 +6,15 @@ from app.services.task_service import *
 from app.models import *
 import asyncio
 
+@sync_to_async
+def get_task_of_taskevent(taskevent: TaskEvent) -> Task:
+    return taskevent.task
+    
+@sync_to_async
+def get_depot_of_taskevent(taskevent: TaskEvent) -> Depot:
+    return taskevent.depot
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if await is_group(update):
         return
@@ -33,14 +42,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def depot_received_driver(update: Update, context: CustomContext):
-    @sync_to_async
-    def get_task_of_taskevent(taskevent: TaskEvent) -> Task:
-        return taskevent.task
-    
-    @sync_to_async
-    def get_depot_of_taskevent(taskevent: TaskEvent) -> Depot:
-        return taskevent.depot
-
     query: CallbackQuery = update.callback_query
     data = query.data
     *args, taskevent_id = data.split('-')
@@ -52,9 +53,33 @@ async def depot_received_driver(update: Update, context: CustomContext):
     # create new taskevent about car waiting in factory
     depot: Depot = await get_depot_of_taskevent(taskevent)
     taskevent: TaskEvent = await create_taskevent(task, 'in_depot', depot=depot)
-    # send message to driver that depot received your car
     
-    result = await alert_driver_about_car_in_depot_notification(driver_app.bot, task, taskevent)
-    if result == "success":
-        await query.answer()
-        await query.edit_message_reply_markup(reply_markup=None)
+    reply_markup = InlineKeyboardMarkup(
+        [[InlineKeyboardButton(
+            text=await get_word_depot_manager("unloaded", query),
+            callback_data=f"depot_completed_unloading-{taskevent.id}"
+        )]]
+    )
+    await query.edit_message_reply_markup(reply_markup=reply_markup)
+
+    # send message to driver that depot received your car
+    context.application.create_task(
+        alert_driver_about_car_in_depot_notification(await get_driver_bot(), task, taskevent)
+    )
+
+async def depot_completed_unloading(update: Update, context: CustomContext):
+    query: CallbackQuery = update.callback_query
+    data = query.data
+    *args, taskevent_id = data.split('-')
+    taskevent: TaskEvent = await get_taskevent_by_id(taskevent_id)
+    task: Task = await get_task_of_taskevent(taskevent)
+    # complete this taskevent
+    await complete_taskevent(taskevent)
+
+    # send message to driver that depot completed unloading
+    context.application.create_task(
+        alert_driver_about_unloading_completed_notification(await get_driver_bot(), task, taskevent)
+    )
+
+    await query.answer()
+    await query.edit_message_reply_markup(reply_markup=None)

@@ -206,13 +206,19 @@ lang_dict = {
 
     "completed": ["Yakunlandi", "Завершено"],
 
-    "": ["", ""],
+    "loaded": ["Yuklab bo'lindi", "Загружено"],
 
-    "": ["", ""],
+    "factory completed loading": [
+        "Yuk mashinaga zavod xodimlari tomonidan yuklanib bo'lindi.", 
+        "Погрузка груза на заводе завершена. Вы можете продолжить маршрут."
+    ],
 
-    "": ["", ""],
+    "unloaded": ["Yuk tushirildi", "Разгружено"],
 
-    "": ["", ""],
+    "depot completed unloading": [
+        "Yuk tushirish omborxona tomonidan yakunlandi. Yo'nalishni davom ettirishingiz mumkin.", 
+        "Разгрузка груза на складе завершена. Вы можете продолжить маршрут."
+    ],
 
     "": ["", ""],
 

@@ -36,8 +36,15 @@ async def driver_info_string_for_factory(task: Task):
 
 async def car_in_factory_string_for_driver(user_id):
     text = f"{await get_word_driver('factory received car', chat_id=user_id)}\n\n" \
-        f"{await get_word_driver('click button after get car', chat_id=user_id)}"
     
+    return text
+
+
+async def factory_completed_loading_for_driver(user_id):
+    text = (
+        f"{await get_word_driver('factory completed loading', chat_id=user_id)}\n\n"
+        f"{await get_word_driver('click button after get car', chat_id=user_id)}"
+    )
     return text
 
 async def driver_info_string_for_depot(task: Task, user_id):
@@ -57,9 +64,12 @@ async def driver_info_string_for_depot(task: Task, user_id):
 
 
 async def car_in_depot_string_for_driver(user_id):
-    text = f"{await get_word_driver('depot received car', chat_id=user_id)}\n\n" \
+    text = f"{await get_word_driver('depot received car', chat_id=user_id)}"
+    return text
+
+async def depot_completed_unloading_for_driver(user_id):
+    text = f"{await get_word_driver('depot completed unloading', chat_id=user_id)}\n\n" \
         f"{await get_word_driver('click button after get car', chat_id=user_id)}"
-    
     return text
 
 async def drivers_next_address_string(user_id, address):

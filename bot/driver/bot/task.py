@@ -98,13 +98,36 @@ async def factory_received_driver(update: Update, context: CustomContext):
     taskevent: TaskEvent = await get_taskevent_by_task_and_event_type(task, 'placing_in_warehouse')
     # complete this taskevent
     await complete_taskevent(taskevent)
-
     # create new taskevent about car waiting in factory
     await create_taskevent(task, 'in_factory')
-    # send message to driver that factory received your car
+    # edit message reply button to complete loading
+    reply_markup = InlineKeyboardMarkup(
+        [[InlineKeyboardButton(
+            text=lang_dict["loaded"][1],
+            callback_data=f"factory_completed_loading-{task.id}"
+        )]]
+    )
+    await query.edit_message_reply_markup(reply_markup=reply_markup)
+
+    # alert driver that factory received car
     context.application.create_task(
         alert_driver_about_car_in_factory_notification(context.bot, task)
     )
+
+async def factory_completed_loading(update: Update, context: CustomContext):
+    query: CallbackQuery = update.callback_query
+    data = query.data
+    *args, task_id = data.split('-')
+    task: Task = await get_task_by_id(int(task_id))
+    # get taskevent about car waiting in factory
+    taskevent: TaskEvent = await get_taskevent_by_task_and_event_type(task, 'in_factory')
+    # complete this taskevent
+    await complete_taskevent(taskevent)
+    # send message to driver that factory completed loading
+    context.application.create_task(
+        alert_driver_about_loading_completed_notification(context.bot, task)
+    )
+
     await query.answer()
     await query.edit_message_reply_markup(reply_markup=None)
 
@@ -114,10 +137,6 @@ async def driver_received_car_from_factory(update: Update, context: CustomContex
     data = query.data
     *args, task_id = data.split('-')
     task: Task = await get_task_by_id(int(task_id))
-    # get taskevent about car waiting in factory
-    taskevent: TaskEvent = await get_taskevent_by_task_and_event_type(task, 'in_factory')
-    # complete this taskevent
-    await complete_taskevent(taskevent)
 
     depot: Depot = await task.get_next_depot
     # get task depot
@@ -173,7 +192,7 @@ async def driver_arrived_to_depot(update: Update, context: CustomContext):
     # send message to depot manager that driver is arriving to depot
     context.application.create_task(
         alert_depot_manager_about_driver_arriving_notification(
-            _depot_manager_app.bot, task, depot, taskevent
+            await get_depot_manager_bot(), task, depot, taskevent
         )
     )
     await query.answer()
@@ -189,8 +208,6 @@ async def driver_received_car_from_depot(update: Update, context: CustomContext)
     *args, taskevent_id = data.split('-')
     taskevent: TaskEvent = await get_taskevent_by_id(taskevent_id)
     task: Task = await get_task_of_taskevent(taskevent)
-    # complete this taskevent
-    await complete_taskevent(taskevent)
 
     depot: Depot = await task.get_next_depot
     if depot:

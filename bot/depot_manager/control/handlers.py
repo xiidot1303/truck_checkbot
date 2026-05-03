@@ -19,8 +19,14 @@ depot_received_driver_handler = CallbackQueryHandler(
     pattern=r'^depot_receive_driver'
 )
 
+depot_completed_unloading_handler = CallbackQueryHandler(
+    main.depot_completed_unloading,
+    pattern=r'^depot_completed_unloading'
+)
+
 handlers = [
     start,
     get_lang,
-    depot_received_driver_handler
+    depot_received_driver_handler,
+    depot_completed_unloading_handler
 ]

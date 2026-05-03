@@ -23,6 +23,10 @@ factory_received_driver_handler = CallbackQueryHandler(
     task.factory_received_driver, 
     pattern=r"^factory_receive_driver"
     )
+factory_completed_loading_handler = CallbackQueryHandler(
+    task.factory_completed_loading, 
+    pattern=r"^factory_completed_loading"
+    )
 driver_arrived_to_warehouse_handler = CallbackQueryHandler(
     task.driver_arrived_to_warehouse,
     pattern=r"^driver_arrived_to_warehouse"
@@ -69,6 +73,7 @@ handlers = [
     received_news_task_handler,
     driver_arrived_to_factory_handler,
     factory_received_driver_handler,
+    factory_completed_loading_handler,
     driver_arrived_to_warehouse_handler,
     driver_received_car_from_factory_handler,
     driver_arrived_to_depot_handler,

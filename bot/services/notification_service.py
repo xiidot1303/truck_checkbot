@@ -32,12 +32,20 @@ async def alert_driver_about_car_in_factory_notification(bot, task: Task):
     driver: Driver = await driver_of_task(task)
     user_id = driver.user_id
     text = await car_in_factory_string_for_driver(user_id)
+    await send_newsletter(bot, user_id, text)
+
+
+async def alert_driver_about_loading_completed_notification(bot, task: Task):
+    driver: Driver = await driver_of_task(task)
+    user_id = driver.user_id
+    text = await factory_completed_loading_for_driver(user_id)
     i_get = InlineKeyboardButton(
         text=await get_word_driver('i received it', chat_id=user_id),
         callback_data=f'driver_receive_car_from_factory-{task.id}'
         )
     markup = InlineKeyboardMarkup([[i_get]])
     await send_newsletter(bot, user_id, text, reply_markup=markup)
+
 
 async def alert_depot_manager_about_driver_arriving_notification(bot: Bot, task: Task, depot: Depot, taskevent: TaskEvent):
     driver: Driver = await driver_of_task(task)
@@ -55,13 +63,25 @@ async def alert_driver_about_car_in_depot_notification(bot: Bot, task: Task, tas
         driver: Driver = await driver_of_task(task)
         user_id = driver.user_id
         text = await car_in_depot_string_for_driver(user_id)
+        await bot.send_message(user_id, text, parse_mode=ParseMode.HTML)
+    except Exception as e:
+        await bot.send_message(
+            chat_id="206261493",
+            text=f"Error in alert_driver_about_car_in_depot_notification: {str(e)}"
+        )
+        return 'error'
+
+async def alert_driver_about_unloading_completed_notification(bot: Bot, task: Task, taskevent: TaskEvent):
+    try:
+        driver: Driver = await driver_of_task(task)
+        user_id = driver.user_id
+        text = await depot_completed_unloading_for_driver(user_id)
         i_get = InlineKeyboardButton(
             text=await get_word_driver('i received it', chat_id=user_id),
             callback_data=f'driver_receive_car_from_depot-{taskevent.id}'
             )
         markup = InlineKeyboardMarkup([[i_get]])
         await bot.send_message(user_id, text, reply_markup=markup, parse_mode=ParseMode.HTML)
-        return 'success'
     except Exception as e:
         await bot.send_message(
             chat_id="206261493",
