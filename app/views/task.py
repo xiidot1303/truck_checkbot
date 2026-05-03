@@ -3,7 +3,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
 from app.services.task_service import *
-from django.db.models import Sum
+from django.db.models import Sum, Q
 
 async def task_report_by_date(request):
     start_date = request.GET.get('created_at__range__gte')
@@ -54,14 +54,16 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
     async for task in tasks:
         task: Task
         async for taskdepot in task.depots.filter():
-            taskdepot: TaskDepot
+            taskdepot: Depot
             row_data = [
                 task.created_at.strftime("%d.%m.%Y") if last_period != task.created_at.date() else "",
                 taskdepot.branch,
                 await task.get_car, await task.get_driver
             ]
             total_differences = 0
-            async for event in task.events.filter().order_by('id'):
+            async for event in task.events.filter(
+                Q(depot=taskdepot) | Q(depot=None)
+            ).order_by('id'):
                 event: TaskEvent
                 difference = await event.difference_with_schedule
                 if difference < 0:
