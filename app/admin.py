@@ -21,8 +21,8 @@ class TaskDepotInline(admin.TabularInline):
 class TaskEventInline(admin.TabularInline):
     model = TaskEvent
     extra = 0
-    fields = ['event_type', 'start_time', 'end_time', 'spend_time', 'schedule_datetime', 'depot']
-    readonly_fields = ['event_type', 'start_time', 'end_time', 'spend_time', 'schedule_datetime', 'depot']
+    fields = ['event_type', 'start_time', 'end_time', 'spend_time', 'schedule_datetime', 'depot', 'photo']
+    readonly_fields = ['event_type', 'start_time', 'end_time', 'spend_time', 'schedule_datetime', 'depot', 'photo']
 
     def spend_time(self, obj):
         if obj.end_time and obj.start_time:

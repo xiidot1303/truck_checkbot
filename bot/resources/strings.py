@@ -225,7 +225,10 @@ lang_dict = {
         "Пожалуйста, отправьте фото для подтверждения."
     ],
 
-    "": ["", ""],
+    "send photo after loading": [
+        "Yuk sifatini tekshirish maqsadida yuk ortilgan vagonni rasmga tushirib yuboring.", 
+        "Пришлите фотографию загруженного вагона, чтобы проверить качество груза."
+    ],
 
     "": ["", ""],
 

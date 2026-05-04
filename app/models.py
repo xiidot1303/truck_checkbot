@@ -87,6 +87,7 @@ class TaskEvent(models.Model):
     duration_norm = models.IntegerField(null=True, blank=True, verbose_name="Норма")
     schedule_time = models.TimeField(null=True, blank=True, verbose_name="Время по графику")
     schedule_datetime = models.DateTimeField(null=True, blank=True, verbose_name="Дата и время по графику")
+    photo = models.FileField(null=True, upload_to='photos/taskevent/', verbose_name="Фотофиксация")
 
     class Meta:
         verbose_name = "Событие"

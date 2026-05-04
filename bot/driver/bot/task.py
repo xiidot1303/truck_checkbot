@@ -137,6 +137,31 @@ async def driver_received_car_from_factory(update: Update, context: CustomContex
     data = query.data
     *args, task_id = data.split('-')
     task: Task = await get_task_by_id(int(task_id))
+    await set_user_data_field(update.effective_user.id, "task_id", task.id)
+
+    await query.answer()
+    await query.edit_message_reply_markup(reply_markup=None)
+    await update.effective_message.reply_html(
+        await get_word_driver("send photo after loading", query)
+    )
+    await set_user_state(update.effective_user.id, States.WAITING_PHOTO_LOADED_CARGO)
+
+
+async def get_photo_loaded_cargo(update: Update, context: CustomContext):
+    if update.effective_message.photo:
+        photo_bytes, file_name = await download_photo_as_bytes(update, context)
+    else:
+        photo_bytes, file_name = None, None
+    
+    task_id = await get_user_data_field(update.effective_user.id, 'task_id')
+    task: Task = await get_task_by_id(int(task_id))
+    taskevent: TaskEvent = await get_taskevent_by_task_and_event_type(task, 'in_factory')
+    # save photo to taskevent
+    await sync_to_async(taskevent.photo.save)(
+        file_name,
+        ContentFile(photo_bytes),
+        save=True
+    )
 
     depot: Depot = await task.get_next_depot
     # get task depot
@@ -148,17 +173,15 @@ async def driver_received_car_from_factory(update: Update, context: CustomContex
     taskevent: TaskEvent = await create_taskevent(task, 'arrive_to_depot', depot=depot)
 
     # ask from driver about telling when arrive to the depot
-    markup = await arrived_keyboard(query, f'driver_arrived_to_depot-{taskevent.id}', task_id)
+    markup = await arrived_keyboard(update, f'driver_arrived_to_depot-{taskevent.id}', task_id)
     address = f"{depot.branch}, {depot.title}"
     
     await bot_send_message(
-        query,
+        update,
         context,
-        await drivers_next_address_string(query.message.chat.id, address),
+        await drivers_next_address_string(update.message.chat.id, address),
         reply_markup=markup
     )
-    await query.answer()
-    await query.edit_message_reply_markup(reply_markup=None)
 
 
 async def driver_arrived_to_depot(update: Update, context: CustomContext):

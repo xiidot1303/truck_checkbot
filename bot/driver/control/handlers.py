@@ -21,6 +21,8 @@ async def photo_router(update, context):
 
     if state == States.WAITING_FORCEMAJEURE_PHOTO:
         await force_majeure.get_photo_of_the_forcemajeure(update, context)
+    elif state == States.WAITING_PHOTO_LOADED_CARGO:
+        await task.get_photo_loaded_cargo(update, context)
 
 
 start = CommandHandler('start', main.start)
