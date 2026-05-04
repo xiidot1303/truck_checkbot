@@ -3,8 +3,8 @@ from app.models import *
 from rangefilter.filters import DateRangeFilter
 
 class DepotAdmin(admin.ModelAdmin):
-    list_display = ["title", "branch", "tg_id", "lat", "lon"]
-    list_editable = ["title", "branch", "tg_id", "lat", "lon"]
+    list_display = ["title", "branch", "tg_id", "lat", "lon", "type"]
+    list_editable = ["title", "branch", "tg_id", "lat", "lon", "type"]
     search_fields = ['title']
     list_filter = ['branch']
     list_display_links = None

@@ -11,6 +11,10 @@ class Depot(models.Model):
     bot_user = models.OneToOneField('bot.DepotManager', null=True, blank=True, on_delete=models.PROTECT)
     lat = models.CharField(null=True, blank=True, max_length=32)
     lon = models.CharField(null=True, blank=True, max_length=32)
+    type = models.CharField(null=True, max_length=32, choices=[
+        ('warehouse', 'склад'),
+        ('farm', 'ферма')
+    ], default='warehouse', verbose_name="Тип")
 
     def __str__(self) -> str:
         return f"{self.branch} | {self.title}"
@@ -20,13 +24,18 @@ class Depot(models.Model):
         verbose_name_plural = "Склады"
 
 class Car(models.Model):
-    code = models.CharField(null=True, blank=False, max_length=64)
-    title = models.CharField(null=True, blank=True, max_length=255)
-    number = models.CharField(null=True, blank=True, max_length=64)
-    tg_id = models.CharField(null=True, blank=True, max_length=16)
+    code = models.CharField(null=True, blank=False, max_length=64, verbose_name="Код")
+    title = models.CharField(null=True, blank=True, max_length=255, verbose_name="Название")
+    number = models.CharField(null=True, blank=True, max_length=64, verbose_name="Номер")
+    tg_id = models.CharField(null=True, blank=True, max_length=16, verbose_name="Telegram ID")
+    milktanker = models.BooleanField(default=False, verbose_name="Молоковоз?")
 
     def __str__(self) -> str:
         return f"{self.title} {self.number}"
+
+    class Meta:
+        verbose_name = "Машина"
+        verbose_name_plural = "Машины"
 
 class Task(models.Model):
     driver = models.ForeignKey('bot.Driver', on_delete=models.CASCADE, verbose_name="Водитель")
@@ -53,6 +62,13 @@ class Task(models.Model):
     @sync_to_async
     def get_driver(self):
         return f"{self.driver}"
+
+    @property
+    @sync_to_async
+    def is_task_car_milktanker(self):
+        if self.car:
+            return self.car.milktanker
+        return False
 
     class Meta:
         verbose_name = "Задание"

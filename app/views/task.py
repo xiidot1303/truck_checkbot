@@ -86,6 +86,14 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
                         event.end_time.strftime('%H:%M') if event.end_time else "",
                         difference
                     ]
+                
+                # add empty cells for milktankers
+                if await task.is_task_car_milktanker:
+                    if event.event_type == 'arrive_to_factory':
+                        data += ["", "", "", "", "", ""]
+                    elif event.event_type == 'in_depot':
+                        data = ["", "", "", "", "", ""]
+
                 row_data += data
             # add empty cells for missing events 
             # check placing_in_warehouse event is present

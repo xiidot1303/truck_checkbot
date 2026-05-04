@@ -72,6 +72,10 @@ async def depot_completed_unloading_for_driver(user_id):
         f"{await get_word_driver('click button after get car', chat_id=user_id)}"
     return text
 
+async def car_in_farm_string_for_driver(user_id):
+    text = f"{await get_word_driver('click button after get car', chat_id=user_id)}"
+    return text
+
 async def drivers_next_address_string(user_id, address):
     text = f"{await get_word_driver('your next address', chat_id=user_id)}: " \
         f"<i>{address}</i>\n\n" \
