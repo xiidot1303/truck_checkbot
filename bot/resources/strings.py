@@ -220,6 +220,13 @@ lang_dict = {
         "Разгрузка груза на складе завершена. Вы можете продолжить маршрут."
     ],
 
+    "send photo of forcemajeure": [
+        "Tasdiqlash uchun hozirgi holatni rasmga tushurib yuboring", 
+        "Пожалуйста, отправьте фото для подтверждения."
+    ],
+
+    "": ["", ""],
+
     "": ["", ""],
 
     "": ["", ""],

@@ -98,7 +98,7 @@ async def send_report_of_task_newsletter(bot: Bot, task: Task, file_path):
         document=file_path
         )
     
-async def alert_controller_about_force_majeure_notification(bot: Bot, task: Task, force_majeure_type: str):
+async def alert_controller_about_force_majeure_notification(bot: Bot, task: Task, force_majeure_type: str, photo_id: str):
     factory: Factory = await get_factory()
     user_id = factory.tg_id
     text = await force_majeure_string_for_controller(task, force_majeure_type)
@@ -107,7 +107,7 @@ async def alert_controller_about_force_majeure_notification(bot: Bot, task: Task
         callback_data=f'confirm_force_majeure-{task.id}-{force_majeure_type}'
         )
     markup = InlineKeyboardMarkup([[i_confirm]])
-    await send_newsletter(bot, user_id, text, reply_markup=markup)
+    await send_newsletter(bot, user_id, text, photo=photo_id, reply_markup=markup)
 
 
 async def alert_driver_about_confirmed_force_majeure_notification(bot: Bot, force_majeure: ForceMajeure):

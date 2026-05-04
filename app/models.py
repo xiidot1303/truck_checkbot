@@ -186,6 +186,7 @@ class ForceMajeure(models.Model):
     start_time = models.DateTimeField(null=True, blank=True, verbose_name="Время начала") 
     end_time = models.DateTimeField(null=True, blank=True, verbose_name="Конечное время")
     spend_time = models.FloatField(null=True, blank=True, verbose_name="Проведенное время (Минуты)")
+    photo = models.FileField(null=True, upload_to="photos/forcemajeures", verbose_name="Фотофиксация")
 
     class Meta:
         verbose_name = "Форс-мажор"

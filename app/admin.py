@@ -38,8 +38,8 @@ class TaskEventInline(admin.TabularInline):
 class ForceMajeureInline(admin.TabularInline):
     model = ForceMajeure
     extra = 0
-    fields = ['type', 'start_time', 'end_time', 'spend_time']
-    readonly_fields = ['type', 'start_time', 'end_time', 'spend_time']
+    fields = ['type', 'start_time', 'end_time', 'spend_time', 'photo']
+    readonly_fields = ['type', 'start_time', 'end_time', 'spend_time', 'photo']
 
 
 class TaskAdmin(admin.ModelAdmin):

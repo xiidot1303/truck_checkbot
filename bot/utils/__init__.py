@@ -28,12 +28,22 @@ async def is_group(update):
         return True
     return False
 
-async def save_and_get_photo(update, context):
+async def save_and_get_photo(update: Update, context, folder = None):
+    folder = f"/{folder}" if folder else ""
     bot = context.bot
     photo_id = await bot.getFile(update.message.photo[-1].file_id)
     *args, file_name = str(photo_id.file_path).split('/')
-    d_photo = await photo_id.download('files/photos/{}'.format(file_name))
+    d_photo = await photo_id.download('files/photos{}/{}'.format(folder, file_name))
     return str(d_photo).replace('files/', '')
+
+
+async def download_photo_as_bytes(update: Update, context) -> tuple[str, str]:
+    bot = context.bot
+    file_id = update.effective_message.photo[-1].file_id
+    file = await bot.get_file(file_id)
+    file_bytes = await file.download_as_bytearray()
+    return file_bytes, f"{file.file_path.split('/')[-1]}"
+
 
 async def set_last_msg_and_markup(context, msg, markup=None):
     context.user_data['last_msg'] = msg

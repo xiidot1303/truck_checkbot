@@ -6,6 +6,8 @@ import os
 from django.conf import settings
 from asgiref.sync import sync_to_async
 from django.utils import timezone
+from django.core.files.base import ContentFile
+import uuid
 
 async def get_task_by_id(id) -> Task:
     obj = await Task.objects.aget(id=id)
@@ -56,10 +58,15 @@ async def complete_taskevent(taskevent: TaskEvent):
     return
 
 
-async def create_force_majeure(task: Task, type) -> ForceMajeure:
+async def create_force_majeure(task: Task, type, photo_bytes, file_name) -> ForceMajeure:
     start_time = await datetime_now()
     obj = await ForceMajeure.objects.acreate(
         task = task, type = type, start_time = start_time
+    )
+    await sync_to_async(obj.photo.save)(
+        file_name,
+        ContentFile(photo_bytes),
+        save=True
     )
     return obj
 

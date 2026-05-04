@@ -11,6 +11,7 @@ from bot.services.language_service import get_word_driver as get_word
 from bot.resources.conversationList import *
 from config import WEBAPP_URL
 import asyncio
+from bot.services.redis_service import *
 
 @dataclass
 class WebhookUpdate:
@@ -28,6 +29,10 @@ class CustomContext(CallbackContext[ExtBot, dict, dict, dict]):
         if isinstance(update, WebhookUpdate):
             return cls(application=application, user_id=update.user_id)
         return super().from_update(update, application)
+
+
+class States:
+    WAITING_FORCEMAJEURE_PHOTO = 'waiting_forcemajeure_photo'
 
 
 async def is_message_back(update: Update):

@@ -11,6 +11,17 @@ from telegram.ext import (
 from bot.driver.bot import (
     main, login, task, location, force_majeure
 )
+from bot.driver.bot import States
+from bot.services.redis_service import *
+
+
+async def photo_router(update, context):
+    user_id = update.effective_user.id
+    state = await get_user_state(user_id)
+
+    if state == States.WAITING_FORCEMAJEURE_PHOTO:
+        await force_majeure.get_photo_of_the_forcemajeure(update, context)
+
 
 start = CommandHandler('start', main.start)
 get_lang = CallbackQueryHandler(login.get_lang, pattern=r"^set_lang")
@@ -67,7 +78,10 @@ driver_completed_force_majeure_handler = CallbackQueryHandler(
     pattern=r"^driver_completed_force_majeure"
 )
 
+photo_handler = MessageHandler(filters.PHOTO, photo_router)
+
 handlers = [
+    photo_handler,
     start,
     get_lang,
     received_news_task_handler,
