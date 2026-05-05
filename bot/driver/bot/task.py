@@ -62,6 +62,7 @@ async def driver_arrived_to_factory(update: Update, context: CustomContext):
         taskdepot = await get_taskdepot_by_task_and_depot(task, depot)
         # update current depot index
         task.current_depot_index = taskdepot.order
+        await task.asave()
         # create new taskevent about driver arrive to depot
         taskevent: TaskEvent = await create_taskevent(task, 'arrive_to_depot', depot=depot)
 

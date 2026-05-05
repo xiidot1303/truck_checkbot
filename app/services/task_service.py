@@ -44,7 +44,7 @@ async def complete_taskevent(taskevent: TaskEvent):
         None
     now: datetime = await datetime_now()
     if task_schedule := await TaskSchedule.objects.filter(
-        depot__id = (await taskevent.get_depot).id,
+        depot__id = (await taskevent.get_depot()).id,
         weekday = task.created_at.weekday()
         ).afirst():
         task_schedule: TaskSchedule
@@ -55,6 +55,31 @@ async def complete_taskevent(taskevent: TaskEvent):
         taskevent.schedule_datetime = schedule_datetime
 
     await taskevent.asave()
+
+    ## change rating
+    rating_type_by_event_type = {
+        'arrive_to_factory': 'driver',
+        'placing_in_warehouse': 'driver',
+        'arrive_to_depot': 'driver',
+        'back_to_factory': 'driver',
+        'in_factory': 'factory',
+        'in_depot': 'depot_manager',
+    }
+
+    # get task rating
+    rating_type = rating_type_by_event_type[taskevent.event_type]
+    task_rating = await TaskRating.objects.filter(
+        task=task, type=rating_type, depot=await taskevent.get_depot(none_result=True)).afirst()
+    if task_rating:
+        difference = await taskevent.difference_with_schedule
+        if difference < -0.5:
+            # late 30 minutes, minus one point
+            task_rating.rating -= 1
+        elif difference > 0.5:
+            # early 30 minutes, plus one point:
+            task_rating.rating += 1
+        await task_rating.asave()
+
     return
 
 

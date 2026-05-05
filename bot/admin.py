@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Avg, Q
 from bot.models import *
 from django.utils.html import format_html
 from django.urls import reverse
@@ -75,7 +76,24 @@ class MesageAdmin(admin.ModelAdmin):
 
 class DriverAdmin(admin.ModelAdmin):
     def get_list_display(self, request):
-        return [field.name for field in self.model._meta.concrete_fields]
+        return [*(
+            field.name for field in self.model._meta.concrete_fields
+        ), 'overall_average_rating']
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.annotate(
+            overall_driver_rating=Avg(
+                'task__taskrating__rating',
+                filter=Q(task__taskrating__type='driver'),
+            )
+        )
+
+    def overall_average_rating(self, obj):
+        if obj.overall_driver_rating is None:
+            return "-"
+        return round(obj.overall_driver_rating, 2)
+    overall_average_rating.short_description = 'Средний рейтинг'
 
 class DepotManagerAdmin(admin.ModelAdmin):
     def get_list_display(self, request):

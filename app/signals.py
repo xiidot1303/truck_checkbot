@@ -13,6 +13,28 @@ def task_created(sender, instance, created, **kwargs):
         # send message to driver about new task
         task_depot: TaskDepot = instance
         task: Task = task_depot.task
+        task_ratings_to_create = []
         if task.current_depot_index + 1 == task_depot.order:
             async_to_sync(alert_driver_about_new_task_notification)(driver_app.bot, task)
         
+            # create task ratings
+            task_ratings_to_create.extend([
+                TaskRating(
+                    type="driver",
+                    task=task
+                ),
+                TaskRating(
+                    type="factory",
+                    task=task
+                )
+            ])
+        
+        task_ratings_to_create.append(
+            TaskRating(
+                type="depot_manager",
+                task=task,
+                depot=task_depot.depot
+            )
+        )
+
+        TaskRating.objects.bulk_create(task_ratings_to_create)

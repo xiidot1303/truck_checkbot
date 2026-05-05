@@ -18,6 +18,12 @@ class TaskDepotInline(admin.TabularInline):
     extra = 1  # Number of extra forms to display
     ordering = ['order']  # Order by 'order' field
 
+class TaskRatingInline(admin.TabularInline):
+    model = TaskRating
+    fields = ["type", "depot", "rating"]
+    readonly_fields = ["type", "depot", "rating"]
+    extra = 0
+
 class TaskEventInline(admin.TabularInline):
     model = TaskEvent
     extra = 0
@@ -47,7 +53,7 @@ class TaskAdmin(admin.ModelAdmin):
     list_display = ['driver', 'depot', 'car', 'created_at', 'is_complete']
     list_filter = ['driver', 'car', ('created_at', DateRangeFilter)]
     # search_fields = ['driver', 'car']
-    inlines = [TaskDepotInline, TaskEventInline, ForceMajeureInline]
+    inlines = [TaskDepotInline, TaskEventInline, ForceMajeureInline, TaskRatingInline]
 
     def depot(self, obj):
         t = ""

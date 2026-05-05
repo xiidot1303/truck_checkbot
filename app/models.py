@@ -137,13 +137,14 @@ class TaskEvent(models.Model):
             return round(difference.total_seconds() / 3600, 2)
         return 0
         
-    @property
     @sync_to_async
-    def get_depot(self):
+    def get_depot(self, none_result = False):
         if self.depot:
             return self.depot
-        else:
+        elif none_result is False:
             return self.task.depots.filter().order_by('taskdepot__order').first()
+        else:
+            return None
 
     @property
     @sync_to_async
@@ -213,3 +214,18 @@ class ForceMajeure(models.Model):
     @sync_to_async
     def get_task(self):
         return self.task
+
+
+class TaskRating(models.Model):
+    type = models.CharField(max_length=32, choices=[
+        ("driver", "Водитель"),
+        ("depot_manager", "Менеджер склада"),
+        ("factory", "Заведующий складом")
+    ], verbose_name="Тип")
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, verbose_name="Задача")
+    rating = models.IntegerField(default=5)
+    depot = models.ForeignKey(Depot, null=True, blank=True, on_delete=models.PROTECT, verbose_name="Склад")
+
+    class Meta:
+        verbose_name = "Оценка задачи"
+        verbose_name_plural = "Оценки задач"
