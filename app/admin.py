@@ -12,6 +12,9 @@ class DepotAdmin(admin.ModelAdmin):
 class CarAdmin(admin.ModelAdmin):
     def get_list_display(self, request):
         return [field.name for field in self.model._meta.concrete_fields]
+    
+    search_fields = ["title", "number"]
+    list_filter = ["milktanker"]
 
 class TaskDepotInline(admin.TabularInline):
     model = TaskDepot
