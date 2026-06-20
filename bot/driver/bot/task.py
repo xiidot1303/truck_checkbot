@@ -234,15 +234,15 @@ async def driver_arrived_to_depot(update: Update, context: CustomContext):
             show_alert=True,
         )
         return
+    
+    # complete taskevent
+    await complete_taskevent(taskevent)
 
     await query.answer()
     await query.edit_message_reply_markup(reply_markup=None)
 
     # check task car is milktanker
     if await task.is_task_car_milktanker:
-        # complete this taskevent
-        await complete_taskevent(taskevent)
-
         depot: Depot = await get_depot_of_taskevent(taskevent)
         taskevent: TaskEvent = await create_taskevent(task, 'in_depot', depot=depot)
 

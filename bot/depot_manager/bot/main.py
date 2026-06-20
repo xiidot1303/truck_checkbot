@@ -47,8 +47,6 @@ async def depot_received_driver(update: Update, context: CustomContext):
     *args, taskevent_id = data.split('-')
     taskevent: TaskEvent = await get_taskevent_by_id(taskevent_id)
     task: Task = await get_task_of_taskevent(taskevent)
-    # complete this taskevent
-    await complete_taskevent(taskevent)
 
     # create new taskevent about car waiting in factory
     depot: Depot = await get_depot_of_taskevent(taskevent)
