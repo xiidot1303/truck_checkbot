@@ -3,7 +3,77 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
 from app.services.task_service import *
-from django.db.models import Sum, Q
+from django.db.models import Q
+
+
+def format_fact_time(fact_time, schedule_datetime) -> str:
+    # show day offset from the schedule date, e.g. "12:32 (+1)"
+    if not fact_time:
+        return ""
+    result = fact_time.strftime('%H:%M')
+    if schedule_datetime:
+        day_offset = (fact_time.date() - schedule_datetime.date()).days
+        if day_offset:
+            result += f" ({day_offset:+d})"
+    return result
+
+# index of the first cell of each event in the report row
+EVENT_COLUMNS = {
+    'arrive_to_factory': 4,  # E
+    'placing_in_warehouse': 7,  # H
+    'in_factory': 10,  # K
+    'arrive_to_depot': 16,  # Q
+    'in_depot': 22,  # W
+    'back_to_factory': 28,  # AC
+}
+EVENTS_LAST_COLUMN = 31  # AE
+
+# summary tables under the main table: event type -> (table key, group by driver or branch)
+SUMMARY_EVENTS = {
+    'arrive_to_factory': ('driver_arrive', 'driver'),
+    'in_depot': ('unloading', 'branch'),
+    'arrive_to_depot': ('cargo_arrive', 'branch'),
+}
+SUMMARY_TABLES = [
+    # (table key, title, first column)
+    ('driver_arrive', "Хайдовчи йетиб бориш норматив буйича", 2),  # B
+    ('unloading', "Юк тушириш норматив буйича", 8),  # H
+    ('cargo_arrive', "Юк йетиб бориши норматив буйича", 14),  # N
+]
+
+
+def write_summary_table(ws, start_row: int, start_col: int, title: str, rows: dict):
+    # rows: name -> [early hours, late hours]
+    # layout: name (2 merged cells) | олдин | кечикиш
+    border = Border(left=Side(style='thin'), right=Side(style='thin'),
+                    top=Side(style='thin'), bottom=Side(style='thin'))
+    title_fill = PatternFill(start_color="dce6f1", end_color="dce6f1", fill_type="solid")
+    total_fill = PatternFill(start_color="ffff00", end_color="ffff00", fill_type="solid")
+
+    ws.cell(row=start_row, column=start_col, value=title).font = Font(bold=True)
+    for col in range(start_col, start_col + 4):
+        ws.cell(row=start_row, column=col).fill = title_fill
+    ws.merge_cells(start_row=start_row, start_column=start_col, end_row=start_row, end_column=start_col + 3)
+
+    ws.cell(row=start_row + 1, column=start_col + 2, value="олдин")
+    ws.cell(row=start_row + 1, column=start_col + 3, value="кечикиш")
+
+    row = start_row + 2
+    total_late = 0
+    for name, (early, late) in rows.items():
+        ws.cell(row=row, column=start_col, value=name)
+        ws.merge_cells(start_row=row, start_column=start_col, end_row=row, end_column=start_col + 1)
+        ws.cell(row=row, column=start_col + 2, value=round(early, 2))
+        ws.cell(row=row, column=start_col + 3, value=round(late, 2))
+        for col in range(start_col, start_col + 4):
+            ws.cell(row=row, column=col).border = border
+        total_late += late
+        row += 1
+
+    total_cell = ws.cell(row=row, column=start_col + 3, value=round(total_late, 2))
+    total_cell.fill = total_fill
+    total_cell.border = border
+
 
 async def task_report_by_date(request):
     start_date = request.GET.get('created_at__range__gte')
@@ -52,23 +122,36 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
 
     # Example: Add your tasks to the worksheet
     last_period = date(1900, 1, 1)
+    # summary: table key -> {driver or branch: [early hours, late hours]}
+    summary = {key: {} for key, _, _ in SUMMARY_TABLES}
+    # events without depot are repeated for every depot of the task, count them once
+    summary_counted_events = set()
     async for task in tasks:
         task: Task
         async for taskdepot in task.depots.filter():
             taskdepot: Depot
+            driver = await task.get_driver
             row_data = [
                 task.created_at.strftime("%d.%m.%Y") if last_period != task.created_at.date() else "",
                 taskdepot.branch,
-                await task.get_car, await task.get_driver
+                await task.get_car, driver
             ]
-            total_differences = 0
+            summary_groups = {'driver': driver, 'branch': taskdepot.branch or ""}
+            for key, group in SUMMARY_EVENTS.values():
+                summary[key].setdefault(summary_groups[group], [0, 0])
+            is_milktanker = await task.is_task_car_milktanker
+            # every event has fixed cells in the row, so missing events don't shift the columns
+            row_data += [""] * (EVENTS_LAST_COLUMN - len(row_data))
+            last_event = None
             async for event in task.events.filter(
                 Q(depot=taskdepot) | Q(depot=None)
             ).order_by('id'):
                 event: TaskEvent
-                difference = await event.difference_with_schedule
-                if difference < 0:
-                    total_differences += difference
+                # in_depot of milktanker is not shown in report
+                if is_milktanker and event.event_type == 'in_depot':
+                    continue
+                has_schedule = bool(event.end_time and event.schedule_datetime)
+                difference = await event.difference_with_schedule if has_schedule else ""
                 if event.event_type in ['in_factory', 'in_depot', 'arrive_to_depot']:
                     # insert double data start and end times
                     data = [
@@ -77,46 +160,49 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
                         "",
 
                         event.schedule_datetime.strftime("%H:%M") if event.schedule_datetime else "",
-                        event.end_time.strftime('%H:%M') if event.end_time else "",
+                        format_fact_time(event.end_time, event.schedule_datetime),
                         difference
                     ]
                 else:
                     data = [
                         event.schedule_datetime.strftime("%H:%M") if event.schedule_datetime else "",
-                        event.end_time.strftime('%H:%M') if event.end_time else "",
+                        format_fact_time(event.end_time, event.schedule_datetime),
                         difference
                     ]
-                
-                # add empty cells for milktankers
-                if await task.is_task_car_milktanker:
-                    if event.event_type == 'arrive_to_factory':
-                        data += ["", "", "", "", "", ""]
-                    elif event.event_type == 'in_depot':
-                        data = ["", "", "", "", "", ""]
+                column = EVENT_COLUMNS[event.event_type]
+                row_data[column:column + len(data)] = data
 
-                row_data += data
-            # add empty cells for missing events 
-            # check placing_in_warehouse event is present
-            if not await task.events.filter(event_type='placing_in_warehouse').aexists():
-                row_data.insert(7, "")
-                row_data.insert(8, "")
-                row_data.insert(9, "")
-            # check back_to_factory event is present
-            if not await task.events.filter(event_type='back_to_factory').aexists():
-                row_data += ["", "", ""]
-            # set force majeures of the task
-            qs = await sync_to_async(list)(
-                task.forcemajeures.filter(spend_time__isnull=False)
-                .values('type')
-                .annotate(total_spend=Sum('spend_time'))
-            )
-            force_majeures_by_type = {item['type']: item['total_spend'] or 0 for item in qs}
-            row_data += [force_majeures_by_type.get('repair', 0) or ""]
-            row_data += [force_majeures_by_type.get('accident', 0) or ""]
-            row_data += [force_majeures_by_type.get('refueling', 0) or ""]
-            total_force_majeure_time = sum(force_majeures_by_type.values())
-            total_differences = round(total_differences - total_force_majeure_time, 2)
-            row_data += [str(total_differences)]
+                if has_schedule and event.event_type in SUMMARY_EVENTS and event.id not in summary_counted_events:
+                    summary_counted_events.add(event.id)
+                    key, group = SUMMARY_EVENTS[event.event_type]
+                    # positive difference - early, negative - late
+                    summary[key][summary_groups[group]][0 if difference > 0 else 1] += difference
+
+                # the latest completed event shows the accumulated delay of the whole trip
+                if has_schedule and (not last_event or event.end_time > last_event.end_time):
+                    last_event = event
+
+            # set force majeures of the task (hours)
+            force_majeures = [
+                fm async for fm in task.forcemajeures.filter(spend_time__isnull=False)
+            ]
+            force_majeures_by_type = {}
+            for fm in force_majeures:
+                force_majeures_by_type[fm.type] = force_majeures_by_type.get(fm.type, 0) + fm.spend_time / 60
+            for fm_type in ['repair', 'accident', 'refueling']:
+                row_data += [round(force_majeures_by_type[fm_type], 2) if force_majeures_by_type.get(fm_type) else ""]
+
+            # total delay = delay of the latest event minus force majeures happened before it
+            if last_event:
+                delay = min(await last_event.difference_with_schedule, 0)
+                excused = sum(
+                    fm.spend_time / 60 for fm in force_majeures
+                    if fm.end_time and fm.end_time <= last_event.end_time
+                )
+                total_delay = round(min(delay + excused, 0), 2)
+            else:
+                total_delay = ""
+            row_data += [total_delay]
             ws.append(row_data)
 
         last_period = task.created_at.date()
@@ -181,5 +267,10 @@ async def create_task_report(start_date: str, end_date: str, is_complete: bool =
             ws.cell(row=row, column=col).fill = PatternFill(start_color="dae3f4", end_color="dae3f4", fill_type="solid")
         for col in range(35, 36):  # Columns AI
             ws.cell(row=row, column=col).fill = PatternFill(start_color="fffbe5", end_color="fffbe5", fill_type="solid")
+
+    # summary tables under the main table (added after styling so they keep their own style)
+    summary_start_row = ws.max_row + 3
+    for key, title, start_col in SUMMARY_TABLES:
+        write_summary_table(ws, summary_start_row, start_col, title, summary[key])
 
     return wb

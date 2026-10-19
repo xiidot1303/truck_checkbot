@@ -52,12 +52,16 @@ async def depot_received_driver(update: Update, context: CustomContext):
     depot: Depot = await get_depot_of_taskevent(taskevent)
     taskevent: TaskEvent = await create_taskevent(task, 'in_depot', depot=depot)
     
-    reply_markup = InlineKeyboardMarkup(
-        [[InlineKeyboardButton(
+    reply_markup = InlineKeyboardMarkup([
+        [InlineKeyboardButton(
             text=await get_word_depot_manager("unloaded", query),
             callback_data=f"depot_completed_unloading-{taskevent.id}"
-        )]]
-    )
+        )],
+        [InlineKeyboardButton(
+            text=await get_word_depot_manager("force majeure", query),
+            callback_data=f"depot_force_majeure-{taskevent.id}"
+        )]
+    ])
     await query.edit_message_reply_markup(reply_markup=reply_markup)
 
     # send message to driver that depot received your car

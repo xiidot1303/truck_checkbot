@@ -196,6 +196,7 @@ FORCE_MAJEURE_TYPES = [
     ('repair', 'Ремонт'),
     ('accident', 'Пробка'),
     ('refueling', 'Заправка'),
+    ('depot', 'На складе'),
 ]
 
 class ForceMajeure(models.Model):
@@ -205,6 +206,8 @@ class ForceMajeure(models.Model):
     end_time = models.DateTimeField(null=True, blank=True, verbose_name="Конечное время")
     spend_time = models.FloatField(null=True, blank=True, verbose_name="Проведенное время (Минуты)")
     photo = models.FileField(null=True, upload_to="photos/forcemajeures", verbose_name="Фотофиксация")
+    reason = models.TextField(null=True, blank=True, verbose_name="Причина")
+    depot = models.ForeignKey(Depot, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Склад")
 
     class Meta:
         verbose_name = "Форс-мажор"
