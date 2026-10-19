@@ -89,3 +89,12 @@ async def force_majeure_string_for_controller(task: Task, force_majeure_type: st
         driver = await task.get_driver
     )
     return text
+
+async def depot_force_majeure_string_for_controller(task: Task, depot: Depot, reason: str):
+    text = str(lang_dict['depot force majeure details'][1]).format(
+        depot = depot.title,
+        car = await task.get_car,
+        driver = await task.get_driver,
+        reason = reason
+    )
+    return text

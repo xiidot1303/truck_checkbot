@@ -225,6 +225,44 @@ lang_dict = {
         "Пожалуйста, отправьте фото для подтверждения."
     ],
 
+    "send reason of forcemajeure": [
+        "Fors-major holati sababini yozib yuboring.",
+        "Напишите причину форс-мажора."
+    ],
+
+    "send photo of forcemajeure depot": [
+        "Endi hozirgi holatni rasmga tushurib yuboring.",
+        "Теперь отправьте фотографию текущей ситуации."
+    ],
+
+    "send text reason": [
+        "Iltimos, sababni matn ko'rinishida yuboring.",
+        "Пожалуйста, отправьте причину текстом."
+    ],
+
+    "depot force majeure started": [
+        "Fors-major holati qayd etildi.\nFors-major yakunlangandan so'ng, <code>Yakunlandi</code> tugmasini bosing.",
+        "Форс-мажор зафиксирован.\nПосле завершения форс-мажора нажмите кнопку <code>Завершено</code>."
+    ],
+
+    "force majeure completed": [
+        "✅ Fors-major yakunlandi.",
+        "✅ Форс-мажор завершен."
+    ],
+
+    "depot force majeure details": [
+        "❕ Omborda fors-major holati yuz berdi!\n\n" \
+            "🏬 Ombor: {depot}\n" \
+            "🚚 Mashina: {car}\n" \
+            "👤 Haydovchi: {driver}\n" \
+            "📝 Sabab: {reason}\n",
+        "❕ Произошел форс-мажор на складе!\n\n" \
+            "🏬 Склад: {depot}\n" \
+            "🚚 Автомобиль: {car}\n" \
+            "👤 Водитель: {driver}\n" \
+            "📝 Причина: {reason}\n"
+    ],
+
     "send photo after loading": [
         "Yuk sifatini tekshirish maqsadida yuk ortilgan vagonni rasmga tushirib yuboring.", 
         "Пришлите фотографию загруженного вагона, чтобы проверить качество груза."

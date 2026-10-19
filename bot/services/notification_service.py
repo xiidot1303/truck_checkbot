@@ -55,7 +55,11 @@ async def alert_depot_manager_about_driver_arriving_notification(bot: Bot, task:
         text=await get_word_depot_manager('i received it', chat_id=user_id),
         callback_data=f'depot_receive_driver-{taskevent.id}'
         )
-    markup = InlineKeyboardMarkup([[i_get]])
+    i_force_majeure = InlineKeyboardButton(
+        text=await get_word_depot_manager('force majeure', chat_id=user_id),
+        callback_data=f'depot_force_majeure-{taskevent.id}'
+        )
+    markup = InlineKeyboardMarkup([[i_get], [i_force_majeure]])
     await send_newsletter(bot, user_id, text, reply_markup=markup)
 
 async def alert_driver_about_car_in_depot_notification(bot: Bot, task: Task, taskevent: TaskEvent):
@@ -121,3 +125,9 @@ async def alert_driver_about_confirmed_force_majeure_notification(bot: Bot, forc
         )
     markup = InlineKeyboardMarkup([[i_button]])
     await send_newsletter(bot, user_id, text, reply_markup=markup)
+
+
+async def alert_controller_about_depot_force_majeure_notification(bot: Bot, task: Task, depot: Depot, reason: str, photo_id: str):
+    factory: Factory = await get_factory()
+    text = await depot_force_majeure_string_for_controller(task, depot, reason)
+    await send_newsletter(bot, factory.tg_id, text, photo=photo_id)

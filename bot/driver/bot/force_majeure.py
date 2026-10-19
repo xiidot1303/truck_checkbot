@@ -12,6 +12,9 @@ async def force_majeure_detected(update: Update, context: CustomContext):
 
     i_buttons = []
     for force_majeure_type in FORCE_MAJEURE_TYPES:
+        if force_majeure_type[0] == 'depot':
+            # depot force majeure is created by depot manager
+            continue
         i_buttons.append(
             InlineKeyboardButton(
                 await get_word_driver(force_majeure_type[0], query),

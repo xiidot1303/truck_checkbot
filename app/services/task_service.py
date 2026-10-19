@@ -83,10 +83,10 @@ async def complete_taskevent(taskevent: TaskEvent):
     return
 
 
-async def create_force_majeure(task: Task, type, photo_bytes, file_name) -> ForceMajeure:
+async def create_force_majeure(task: Task, type, photo_bytes, file_name, reason=None, depot=None) -> ForceMajeure:
     start_time = await datetime_now()
     obj = await ForceMajeure.objects.acreate(
-        task = task, type = type, start_time = start_time
+        task = task, type = type, start_time = start_time, reason = reason, depot = depot
     )
     await sync_to_async(obj.photo.save)(
         file_name,
@@ -105,7 +105,7 @@ async def complete_force_majeure(force_majeure: ForceMajeure):
     end_time = await datetime_now()
     force_majeure.end_time = end_time
     delta = force_majeure.end_time - force_majeure.start_time
-    minute = round(delta.seconds / 60, 2)
+    minute = round(delta.total_seconds() / 60, 2)
     force_majeure.spend_time = minute
     await force_majeure.asave()
     return
