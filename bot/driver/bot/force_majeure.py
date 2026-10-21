@@ -5,12 +5,7 @@ from bot.services.notification_service import *
 from telegram import ForceReply
 
 
-async def force_majeure_detected(update: Update, context: CustomContext):
-    query: CallbackQuery = update.callback_query
-    data = query.data
-    *args, task_id = data.split('-')
-    task: Task = await get_task_by_id(int(task_id))
-
+async def send_force_majeure_types(message, chat_id, task_id):
     i_buttons = []
     for force_majeure_type in FORCE_MAJEURE_TYPES:
         if force_majeure_type[0] in ['depot', 'factory']:
@@ -18,15 +13,39 @@ async def force_majeure_detected(update: Update, context: CustomContext):
             continue
         i_buttons.append(
             InlineKeyboardButton(
-                await get_word_driver(force_majeure_type[0], query),
+                await get_word_driver(force_majeure_type[0], chat_id=chat_id),
                 callback_data=f'force_majeure_type-{task_id}-{force_majeure_type[0]}'
             )
         )
-    await query.answer()
-    await query.message.reply_text(
-        text=await get_word_driver('select force majeure type', query),
+    await message.reply_text(
+        text=await get_word_driver('select force majeure type', chat_id=chat_id),
         reply_markup=InlineKeyboardMarkup([i_buttons])
     )
+
+
+async def force_majeure_detected(update: Update, context: CustomContext):
+    query: CallbackQuery = update.callback_query
+    data = query.data
+    *args, task_id = data.split('-')
+
+    await query.answer()
+    await send_force_majeure_types(query.message, query.message.chat.id, task_id)
+
+
+async def force_majeure_button(update: Update, context: CustomContext):
+    # force majeure from persistent keyboard: use driver's active task
+    if await is_group(update):
+        return
+    chat_id = update.message.chat.id
+    driver: Driver = await Driver.objects.filter(user_id=chat_id).afirst()
+    if not driver:
+        return
+    task: Task = await Task.objects.filter(driver=driver, is_complete=False).order_by('-id').afirst()
+    if not task:
+        await update.message.reply_text(await get_word_driver('no active task', chat_id=chat_id))
+        return
+
+    await send_force_majeure_types(update.message, chat_id, task.id)
 
 
 async def force_majeure_type_selected(update: Update, context: CustomContext):

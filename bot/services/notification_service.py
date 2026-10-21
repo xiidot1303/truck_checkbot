@@ -15,7 +15,11 @@ async def alert_driver_about_new_task_notification(bot: Bot, task: Task):
         text=await get_word_driver('i received it', chat_id=user_id),
         callback_data=f'driver_receive_task-{task_id}'
         )
-    markup = InlineKeyboardMarkup([[i_get]])
+    i_force_majeure = InlineKeyboardButton(
+        text=await get_word_driver('force majeure', chat_id=user_id),
+        callback_data=f'force_majeure-{task_id}'
+        )
+    markup = InlineKeyboardMarkup([[i_get], [i_force_majeure]])
     await send_newsletter(bot, user_id, text, reply_markup=markup)
 
 async def alert_factory_about_driver_arriving_notification(bot, task: Task):

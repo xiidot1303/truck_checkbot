@@ -168,6 +168,33 @@ lang_dict = {
         "Форс-мажор"
     ],
 
+    "force majeure button": ["⚠️ Fors-major", "⚠️ Форс-мажор"],
+
+    "force majeure button hint": [
+        "Fors-major holati yuz bersa, pastdagi <code>⚠️ Fors-major</code> tugmasini bosing.",
+        "Если произойдет форс-мажор, нажмите кнопку <code>⚠️ Форс-мажор</code> внизу."
+    ],
+
+    "depot force majeure button hint": [
+        "Fors-major holati yuz bersa, pastdagi <code>⚠️ Fors-major</code> tugmasini bosing.",
+        "Если произойдет форс-мажор, нажмите кнопку <code>⚠️ Форс-мажор</code> внизу."
+    ],
+
+    "no cars in depot": [
+        "Hozirda omborda mashina yo'q.",
+        "Сейчас на складе нет машин."
+    ],
+
+    "select car of forcemajeure": [
+        "Qaysi mashina bo'yicha fors-major?",
+        "По какой машине форс-мажор?"
+    ],
+
+    "no active task": [
+        "Sizda faol topshiriq yo'q.",
+        "У вас нет активного задания."
+    ],
+
     "repair": ["Remont", "Ремонт"],
 
     "accident": ["Tirbandlik", "Пробка"],

@@ -13,6 +13,8 @@ from bot.depot_manager.bot import (
 )
 from bot.depot_manager.bot import States
 from bot.services.redis_service import *
+from bot.resources.strings import lang_dict
+import re
 
 
 async def text_router(update, context):
@@ -59,6 +61,13 @@ depot_completed_force_majeure_handler = CallbackQueryHandler(
     pattern=r'^depot_completed_force_majeure-'
 )
 
+force_majeure_button_handler = MessageHandler(
+    filters.Regex(
+        "^(" + "|".join(re.escape(text) for text in lang_dict['force majeure button']) + ")$"
+    ),
+    force_majeure.force_majeure_button
+)
+
 text_handler = MessageHandler(filters.TEXT & ~filters.COMMAND, text_router)
 photo_handler = MessageHandler(filters.PHOTO, photo_router)
 
@@ -71,4 +80,6 @@ handlers = [
     depot_completed_force_majeure_handler,
     text_handler,
     photo_handler,
+    # handlers are added in reverse order, so this one is checked before text_handler
+    force_majeure_button_handler,
 ]

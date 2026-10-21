@@ -13,6 +13,8 @@ from bot.driver.bot import (
 )
 from bot.driver.bot import States
 from bot.services.redis_service import *
+from bot.resources.strings import lang_dict
+import re
 
 
 async def photo_router(update, context):
@@ -97,6 +99,13 @@ factory_completed_force_majeure_handler = CallbackQueryHandler(
     pattern=r"^factory_completed_force_majeure-"
 )
 
+force_majeure_button_handler = MessageHandler(
+    filters.Regex(
+        "^(" + "|".join(re.escape(text) for text in lang_dict['force majeure button']) + ")$"
+    ),
+    force_majeure.force_majeure_button
+)
+
 photo_handler = MessageHandler(filters.PHOTO, photo_router)
 text_handler = MessageHandler(filters.TEXT & ~filters.COMMAND, text_router)
 
@@ -124,5 +133,7 @@ handlers = [
 
     update_driver_location_handler,
     text_handler,
+    # handlers are added in reverse order, so this one is checked before text_handler
+    force_majeure_button_handler,
     
 ]

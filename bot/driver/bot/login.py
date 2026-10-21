@@ -17,4 +17,8 @@ async def get_lang(update: Update, context: CustomContext):
     await car.asave()
     await query.answer()
     await query.edit_message_text(await get_word('successfully registred', query))
+    await query.message.reply_html(
+        await get_word('force majeure button hint', query),
+        reply_markup=await driver_main_keyboard(query)
+    )
     return 

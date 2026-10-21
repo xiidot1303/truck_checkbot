@@ -17,7 +17,8 @@ async def received_new_task(update: Update, context: CustomContext):
     await bot_send_message(
         query,
         context,
-        await get_word('send live location', query)
+        await get_word('send live location', query),
+        reply_markup=await driver_main_keyboard(query)
     )
 
     markup = await arrived_keyboard(query, f'driver_arrived_to_factory-{task_id}', task_id)

@@ -21,8 +21,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # check driver is registred or not
     if await is_depot_manager_registred(update.message.chat_id):
-        text = await get_word('you are successfully registred', update)
-        await update_message_reply_text(update, text)
+        text = f"{await get_word('you are successfully registred', update)}\n\n" \
+            f"{await get_word('depot force majeure button hint', update)}"
+        await update_message_reply_text(update, text, reply_markup=await depot_manager_main_keyboard(update))
         return
     
     # check this driver ID is set on cars
@@ -63,6 +64,13 @@ async def depot_received_driver(update: Update, context: CustomContext):
         )]
     ])
     await query.edit_message_reply_markup(reply_markup=reply_markup)
+
+    if not await get_user_data_field(update.effective_user.id, 'fm_keyboard_shown'):
+        await query.message.reply_html(
+            await get_word('depot force majeure button hint', query),
+            reply_markup=await depot_manager_main_keyboard(query)
+        )
+        await set_user_data_field(update.effective_user.id, 'fm_keyboard_shown', True)
 
     # send message to driver that depot received your car
     context.application.create_task(

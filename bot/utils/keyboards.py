@@ -43,3 +43,24 @@ async def arrived_keyboard(update, callback_data, task_id) -> InlineKeyboardMark
     )
     markup = InlineKeyboardMarkup([[i_arrived], [i_force_majeure]])
     return markup
+
+
+async def driver_main_keyboard(update=None, chat_id=None) -> ReplyKeyboardMarkup:
+    # persistent keyboard, so force majeure button is always available
+    markup = ReplyKeyboardMarkup(
+        [[KeyboardButton(await get_word_driver('force majeure button', update, chat_id))]],
+        resize_keyboard=True,
+        is_persistent=True
+    )
+    return markup
+
+
+
+async def depot_manager_main_keyboard(update=None, chat_id=None) -> ReplyKeyboardMarkup:
+    # persistent keyboard, so force majeure button is always available
+    markup = ReplyKeyboardMarkup(
+        [[KeyboardButton(await get_word_depot_manager('force majeure button', update, chat_id))]],
+        resize_keyboard=True,
+        is_persistent=True
+    )
+    return markup

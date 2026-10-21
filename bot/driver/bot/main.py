@@ -14,8 +14,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # check driver is registred or not
     if await is_driver_registred(update.message.chat_id):
-        text = await get_word('you are successfully registred', update)
-        await update_message_reply_text(update, text)
+        text = f"{await get_word('you are successfully registred', update)}\n\n" \
+            f"{await get_word('force majeure button hint', update)}"
+        await update_message_reply_text(update, text, reply_markup=await driver_main_keyboard(update))
         return
     else:
     # check this driver ID is set on cars
