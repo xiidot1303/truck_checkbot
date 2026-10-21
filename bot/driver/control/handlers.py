@@ -23,6 +23,15 @@ async def photo_router(update, context):
         await force_majeure.get_photo_of_the_forcemajeure(update, context)
     elif state == States.WAITING_PHOTO_LOADED_CARGO:
         await task.get_photo_loaded_cargo(update, context)
+    elif state == States.WAITING_FACTORY_FORCEMAJEURE_PHOTO:
+        await force_majeure.get_photo_of_the_factory_forcemajeure(update, context)
+
+
+async def text_router(update, context):
+    state = await get_user_state(update.effective_user.id)
+
+    if state == States.WAITING_FACTORY_FORCEMAJEURE_REASON:
+        await force_majeure.get_reason_of_the_factory_forcemajeure(update, context)
 
 
 start = CommandHandler('start', main.start)
@@ -79,8 +88,17 @@ driver_completed_force_majeure_handler = CallbackQueryHandler(
     force_majeure.driver_complete_force_majeure,
     pattern=r"^driver_completed_force_majeure"
 )
+factory_force_majeure_detected_handler = CallbackQueryHandler(
+    force_majeure.factory_force_majeure_detected,
+    pattern=r"^factory_force_majeure-"
+)
+factory_completed_force_majeure_handler = CallbackQueryHandler(
+    force_majeure.factory_complete_force_majeure,
+    pattern=r"^factory_completed_force_majeure-"
+)
 
 photo_handler = MessageHandler(filters.PHOTO, photo_router)
+text_handler = MessageHandler(filters.TEXT & ~filters.COMMAND, text_router)
 
 handlers = [
     photo_handler,
@@ -100,8 +118,11 @@ handlers = [
     force_majeure_selected_handler,
     controller_confirm_force_majeure_handler,
     driver_completed_force_majeure_handler,
+    factory_force_majeure_detected_handler,
+    factory_completed_force_majeure_handler,
 
 
     update_driver_location_handler,
+    text_handler,
     
 ]

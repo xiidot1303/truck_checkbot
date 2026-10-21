@@ -124,12 +124,16 @@ async def factory_received_driver(update: Update, context: CustomContext):
     # create new taskevent about car waiting in factory
     await create_taskevent(task, 'in_factory')
     # edit message reply button to complete loading
-    reply_markup = InlineKeyboardMarkup(
-        [[InlineKeyboardButton(
+    reply_markup = InlineKeyboardMarkup([
+        [InlineKeyboardButton(
             text=lang_dict["loaded"][1],
             callback_data=f"factory_completed_loading-{task.id}"
-        )]]
-    )
+        )],
+        [InlineKeyboardButton(
+            text=lang_dict["force majeure"][1],
+            callback_data=f"factory_force_majeure-{task.id}"
+        )]
+    ])
     await query.edit_message_reply_markup(reply_markup=reply_markup)
 
     # alert driver that factory received car

@@ -2,6 +2,7 @@ from bot.driver.bot import *
 from app.services.task_service import *
 from app.models import FORCE_MAJEURE_TYPES
 from bot.services.notification_service import *
+from telegram import ForceReply
 
 
 async def force_majeure_detected(update: Update, context: CustomContext):
@@ -12,8 +13,8 @@ async def force_majeure_detected(update: Update, context: CustomContext):
 
     i_buttons = []
     for force_majeure_type in FORCE_MAJEURE_TYPES:
-        if force_majeure_type[0] == 'depot':
-            # depot force majeure is created by depot manager
+        if force_majeure_type[0] in ['depot', 'factory']:
+            # these force majeures are created by depot manager and factory
             continue
         i_buttons.append(
             InlineKeyboardButton(
@@ -98,3 +99,74 @@ async def driver_complete_force_majeure(update: Update, context: CustomContext):
 
     await complete_force_majeure(force_majeure)
     await bot_delete_message(query, context)
+
+
+# factory (warehouse manager) force majeure. Factory chat is a group,
+# so ask with ForceReply: bot receives replies to its messages even in privacy mode
+async def factory_force_majeure_detected(update: Update, context: CustomContext):
+    query: CallbackQuery = update.callback_query
+    data = query.data
+    *args, task_id = data.split('-')
+    user = update.effective_user
+
+    await set_user_state(user.id, States.WAITING_FACTORY_FORCEMAJEURE_REASON)
+    await set_user_data_field(user.id, 'fm_factory_task_id', task_id)
+
+    await query.answer()
+    await query.message.reply_html(
+        f"{user.mention_html()}, {lang_dict['send reason of forcemajeure'][1]}",
+        reply_markup=ForceReply(selective=True)
+    )
+
+
+async def get_reason_of_the_factory_forcemajeure(update: Update, context: CustomContext):
+    user = update.effective_user
+    await set_user_data_field(user.id, 'fm_factory_reason', update.effective_message.text)
+    await set_user_state(user.id, States.WAITING_FACTORY_FORCEMAJEURE_PHOTO)
+
+    await update.effective_message.reply_html(
+        lang_dict['send photo of forcemajeure depot'][1],
+        reply_markup=ForceReply(selective=True)
+    )
+
+
+async def get_photo_of_the_factory_forcemajeure(update: Update, context: CustomContext):
+    user = update.effective_user
+    user_data = await get_user_data(user.id)
+    task: Task = await get_task_by_id(int(user_data.get('fm_factory_task_id')))
+    reason = user_data.get('fm_factory_reason')
+
+    photo_bytes, file_name = await download_photo_as_bytes(update, context)
+    force_majeure: ForceMajeure = await create_force_majeure(
+        task, 'factory', photo_bytes, file_name, reason=reason
+    )
+
+    await clear_user_state(user.id)
+    await delete_user_data_field(user.id, 'fm_factory_task_id')
+    await delete_user_data_field(user.id, 'fm_factory_reason')
+
+    reply_markup = InlineKeyboardMarkup(
+        [[InlineKeyboardButton(
+            text=lang_dict['completed'][1],
+            callback_data=f"factory_completed_force_majeure-{force_majeure.id}"
+        )]]
+    )
+    await update.effective_message.reply_html(
+        f"{lang_dict['depot force majeure started'][1]}\n\n"
+        f"🚚 {await task.get_car}\n📝 {reason}",
+        reply_markup=reply_markup
+    )
+
+
+async def factory_complete_force_majeure(update: Update, context: CustomContext):
+    query: CallbackQuery = update.callback_query
+    data = query.data
+    *args, force_majeure_id = data.split('-')
+    force_majeure: ForceMajeure = await get_force_majeure_by_id(int(force_majeure_id))
+
+    if not force_majeure.end_time:
+        await complete_force_majeure(force_majeure)
+
+    await query.answer()
+    await query.edit_message_reply_markup(reply_markup=None)
+    await query.message.reply_text(lang_dict['force majeure completed'][1])

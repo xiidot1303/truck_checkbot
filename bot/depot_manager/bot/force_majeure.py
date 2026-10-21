@@ -1,6 +1,7 @@
 from bot.depot_manager.bot import *
 from bot.services.notification_service import *
 from app.services.task_service import *
+from telegram import ForceReply
 
 
 async def force_majeure_detected(update: Update, context: CustomContext):
@@ -11,9 +12,11 @@ async def force_majeure_detected(update: Update, context: CustomContext):
     await set_user_state(update.effective_user.id, States.WAITING_FORCEMAJEURE_REASON)
     await set_user_data_field(update.effective_user.id, 'fm_taskevent_id', taskevent_id)
 
+    # ForceReply: in groups bot receives replies to its messages even in privacy mode
     await query.answer()
-    await query.message.reply_text(
-        await get_word('send reason of forcemajeure', query)
+    await query.message.reply_html(
+        f"{update.effective_user.mention_html()}, {await get_word('send reason of forcemajeure', query)}",
+        reply_markup=ForceReply(selective=True)
     )
 
 
@@ -22,7 +25,8 @@ async def get_reason_of_the_forcemajeure(update: Update, context: CustomContext)
     await set_user_state(update.effective_user.id, States.WAITING_FORCEMAJEURE_PHOTO)
 
     await update.effective_message.reply_text(
-        await get_word('send photo of forcemajeure depot', update)
+        await get_word('send photo of forcemajeure depot', update),
+        reply_markup=ForceReply(selective=True)
     )
 
 

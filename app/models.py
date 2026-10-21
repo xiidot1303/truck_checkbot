@@ -197,6 +197,7 @@ FORCE_MAJEURE_TYPES = [
     ('accident', 'Пробка'),
     ('refueling', 'Заправка'),
     ('depot', 'На складе'),
+    ('factory', 'На заводе'),
 ]
 
 class ForceMajeure(models.Model):

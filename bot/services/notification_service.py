@@ -25,7 +25,11 @@ async def alert_factory_about_driver_arriving_notification(bot, task: Task):
         text=lang_dict['i received it'][1],
         callback_data=f'factory_receive_driver-{task.id}'
         )
-    markup = InlineKeyboardMarkup([[i_get]])
+    i_force_majeure = InlineKeyboardButton(
+        text=lang_dict['force majeure'][1],
+        callback_data=f'factory_force_majeure-{task.id}'
+        )
+    markup = InlineKeyboardMarkup([[i_get], [i_force_majeure]])
     await send_newsletter(bot, factory.tg_id, text, reply_markup=markup)
 
 async def alert_driver_about_car_in_factory_notification(bot, task: Task):

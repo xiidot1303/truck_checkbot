@@ -34,6 +34,8 @@ class CustomContext(CallbackContext[ExtBot, dict, dict, dict]):
 class States:
     WAITING_FORCEMAJEURE_PHOTO = 'waiting_forcemajeure_photo'
     WAITING_PHOTO_LOADED_CARGO = 'waiting_photo_loaded_cargo'
+    WAITING_FACTORY_FORCEMAJEURE_REASON = 'waiting_factory_forcemajeure_reason'
+    WAITING_FACTORY_FORCEMAJEURE_PHOTO = 'waiting_factory_forcemajeure_photo'
 
 
 async def is_message_back(update: Update):
